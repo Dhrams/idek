@@ -1,25 +1,88 @@
 
 
+First we import number and set its random seed to a fixed number for reproducibility.
+#+BEGIN_SRC ipython :session
+import numpy as np
+# For reproducibility
+np.random.seed(123)
+#+END_SRC
+
+#+RESULTS:
+: # Out[10]:
+
+We'll be using MNIST data to verify that we have a model that works.
+#+BEGIN_SRC ipython :session
+# Load pre-shuffled MNIST data into train and test sets
+from keras.datasets import mnist
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+#+END_SRC
+
+#+RESULTS:
+: # Out[12]:
+
+Plotting the first image in the training data so that we have an idea of what we're looking at.
+#+BEGIN_SRC ipython :session :results raw drawer
+%matplotlib inline
+# Visualize data
+from matplotlib import pyplot as plt
+plt.imshow(X_train[0])
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+# Out[16]:
+: <matplotlib.image.AxesImage at 0x7fd819e84780>
+[[file:./obipy-resources/16918aTw.png]]
+:END:
+
+#+BEGIN_SRC ipython :session
+nb_classes = 10
+
+X_train = X_train.reshape(60000, 784)
+X_test = X_test.reshape(10000, 784)
+X_train = X_train.astype('float32')
+X_test = X_test.astype('float32')
+
+# normalize the dataset
+# 255 is the maximum value in the channel
+# Normally, we would use sklearn.preprocessing.MinMaxScaler
+X_train /= 255
+X_test /= 255
+
+from keras.utils import np_utils
+# Convert 1-dimensional class arrays to 10-dimensional class matrices
+Y_train = np_utils.to_categorical(y_train, nb_classes)
+Y_test = np_utils.to_categorical(y_test, nb_classes)
+#+END_SRC
+
+#+RESULTS:
+: # Out[27]:
+
 #+BEGIN_SRC ipython :noweb yes :session
 # Class Definition of Neural Net
 <<NeuralNet>>
 #+END_SRC
 
 #+RESULTS:
-: # Out[8]:
+: # Out[30]:
 
 #+BEGIN_SRC ipython :session
-net = NeuralNet(input_node_size = 3,
-                output_node_size = 3,
-                hidden_layers_node_size = [4,4])
+net = NeuralNet(input_node_size = 512,
+                output_node_size = 10,
+                input_shape = (784,),
+                hidden_layers_node_size = [512,512])
 #+END_SRC
 
 #+RESULTS:
-: # Out[9]:
+: # Out[43]:
 
 #+BEGIN_SRC ipython :session
-net.model.fit(x_train, y_train, epochs=5, batch_size=32)
-#+END_SRC
+net.model.fit(X_train, Y_train, epochs=15, batch_size=128)
+#+End_SRC
+
+#+RESULTS:
+: # Out[45]:
+: : <keras.callbacks.History at 0x7fd808613e10>
 
 
 
@@ -31,31 +94,41 @@ net.model.fit(x_train, y_train, epochs=5, batch_size=32)
       def __init__(self,
                    input_node_size = None,               # Number of nodes in input layer
                    output_node_size = None,              # Number of nodes in output layer
+                   input_shape = None,
                    hidden_layers_node_size = []          # Number of nodes in each hidden layer
                   ):
                       <<NeuralNet_init>>
 #+END_SRC
 
+The Sequential model is a linear stack of layers. We pass in a list of layer instances to it to make a Neural Net.
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
           from keras.models import Sequential
           self.model = Sequential()
 #+END_SRC
 
+Let's import the core layers from Keras which are almost always used.
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
-          from keras.layers import Dense
+          from keras.layers import Dense, Dropout, Activation, Flatten
 #+END_SRC
 
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
-          # First layer requires input dimension ie input_node_size
+          from keras.layers import Convolution2D, MaxPooling2D
+#+END_SRC
+
+The model should know what input shape it should expect. For this reason, we sepcifiy an input size for the first layer.
+#+NAME: NeuralNet_init
+#+BEGIN_SRC python
+          # First layer requires input dimension ie input_shape
+
           self.model.add(
-                         Dense(units=64,
-                               activation='relu',
-                               input_dim=input_node_size
+                         Dense(units=input_node_size,
+                               input_shape=input_shape
                                )
-                        )
+                         )
+          self.model.add(Activation('relu'))
 #+END_SRC
 
 #+NAME: NeuralNet_init
@@ -67,6 +140,7 @@ net.model.fit(x_train, y_train, epochs=5, batch_size=32)
                                    activation='relu'
                                    )
                             )
+              self.model.add(Dropout(0.2))
 #+END_SRC
 
 #+NAME: NeuralNet_init
@@ -84,7 +158,7 @@ net.model.fit(x_train, y_train, epochs=5, batch_size=32)
 #+BEGIN_SRC python
           # Compile model
           self.model.compile(loss='categorical_crossentropy',
-                             optimizer='sgd',
+                             optimizer='adam',
                              metrics=['accuracy'])
           #model.fit(x_train, y_train, epochs=5, batch_size=32)
 #+END_SRC
