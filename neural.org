@@ -1,4 +1,6 @@
 
+In order to use this file, activate org-babel for ipython and press C-c C-c to execute code blocks.
+
 
 First we import number and set its random seed to a fixed number for reproducibility.
 #+BEGIN_SRC ipython :session
