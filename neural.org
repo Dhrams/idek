@@ -10,7 +10,25 @@ np.random.seed(123)
 #+END_SRC
 
 #+RESULTS:
-: # Out[10]:
+: # Out[50]:
+
+#+BEGIN_SRC ipython :session
+from keras import backend as K
+import os
+
+def set_keras_backend(backend):
+
+    if K.backend() != backend:
+        os.environ['KERAS_BACKEND'] = backend
+        import importlib
+        importlib.reload(K)
+        assert K.backend() == backend
+
+set_keras_backend("theano")
+#+END_SRC
+
+#+RESULTS:
+: # Out[54]:
 
 We'll be using MNIST data to verify that we have a model that works.
 #+BEGIN_SRC ipython :session
@@ -20,7 +38,7 @@ from keras.datasets import mnist
 #+END_SRC
 
 #+RESULTS:
-: # Out[12]:
+: # Out[55]:
 
 Plotting the first image in the training data so that we have an idea of what we're looking at.
 #+BEGIN_SRC ipython :session :results raw drawer
@@ -32,9 +50,9 @@ plt.imshow(X_train[0])
 
 #+RESULTS:
 :RESULTS:
-# Out[16]:
-: <matplotlib.image.AxesImage at 0x7fd819e84780>
-[[file:./obipy-resources/16918aTw.png]]
+# Out[56]:
+: <matplotlib.image.AxesImage at 0x7fd7e01688d0>
+[[file:./obipy-resources/16918nd2.png]]
 :END:
 
 #+BEGIN_SRC ipython :session
@@ -58,7 +76,7 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 #+END_SRC
 
 #+RESULTS:
-: # Out[27]:
+: # Out[57]:
 
 #+BEGIN_SRC ipython :noweb yes :session
 # Class Definition of Neural Net
@@ -66,25 +84,25 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 #+END_SRC
 
 #+RESULTS:
-: # Out[30]:
+: # Out[58]:
 
 #+BEGIN_SRC ipython :session
-net = NeuralNet(input_node_size = 512,
+net = NeuralNet(input_node_size = 784,
                 output_node_size = 10,
                 input_shape = (784,),
-                hidden_layers_node_size = [512,512])
+                hidden_layers_node_size = [512])
 #+END_SRC
 
 #+RESULTS:
-: # Out[43]:
+: # Out[59]:
 
 #+BEGIN_SRC ipython :session
-net.model.fit(X_train, Y_train, epochs=15, batch_size=128)
+net.model.fit(X_train, Y_train, epochs=6, batch_size=128)
 #+End_SRC
 
 #+RESULTS:
-: # Out[45]:
-: : <keras.callbacks.History at 0x7fd808613e10>
+: # Out[60]:
+: : <keras.callbacks.History at 0x7fd7e00f3588>
 
 
 
