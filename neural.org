@@ -10,7 +10,7 @@ np.random.seed(123)
 #+END_SRC
 
 #+RESULTS:
-: # Out[50]:
+: # Out[1]:
 
 #+BEGIN_SRC ipython :session
 from keras import backend as K
@@ -28,7 +28,7 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[54]:
+: # Out[3]:
 
 We'll be using MNIST data to verify that we have a model that works.
 #+BEGIN_SRC ipython :session
@@ -38,7 +38,7 @@ from keras.datasets import mnist
 #+END_SRC
 
 #+RESULTS:
-: # Out[55]:
+: # Out[4]:
 
 Plotting the first image in the training data so that we have an idea of what we're looking at.
 #+BEGIN_SRC ipython :session :results raw drawer
@@ -50,9 +50,9 @@ plt.imshow(X_train[0])
 
 #+RESULTS:
 :RESULTS:
-# Out[56]:
-: <matplotlib.image.AxesImage at 0x7fd7e01688d0>
-[[file:./obipy-resources/16918nd2.png]]
+# Out[5]:
+: <matplotlib.image.AxesImage at 0x7f86464cfef0>
+[[file:./obipy-resources/3881t5X.png]]
 :END:
 
 #+BEGIN_SRC ipython :session
@@ -64,7 +64,7 @@ X_train = X_train.astype('float32')
 X_test = X_test.astype('float32')
 
 # normalize the dataset
-# 255 is the maximum value in the channel
+# 25from keras import regularizers
 # Normally, we would use sklearn.preprocessing.MinMaxScaler
 X_train /= 255
 X_test /= 255
@@ -76,7 +76,7 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 #+END_SRC
 
 #+RESULTS:
-: # Out[57]:
+: # Out[9]:
 
 #+BEGIN_SRC ipython :noweb yes :session
 # Class Definition of Neural Net
@@ -84,7 +84,7 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 #+END_SRC
 
 #+RESULTS:
-: # Out[58]:
+: # Out[13]:
 
 #+BEGIN_SRC ipython :session
 net = NeuralNet(input_node_size = 784,
@@ -94,15 +94,15 @@ net = NeuralNet(input_node_size = 784,
 #+END_SRC
 
 #+RESULTS:
-: # Out[59]:
+: # Out[14]:
 
 #+BEGIN_SRC ipython :session
 net.model.fit(X_train, Y_train, epochs=6, batch_size=128)
 #+End_SRC
 
 #+RESULTS:
-: # Out[60]:
-: : <keras.callbacks.History at 0x7fd7e00f3588>
+: # Out[15]:
+: : <keras.callbacks.History at 0x7f864ab2cc18>
 
 
 
@@ -156,11 +156,21 @@ The model should know what input shape it should expect. For this reason, we sep
           # Add layers to model for all hidden layers
           for node_size in hidden_layers_node_size:
               self.model.add(
-                             Dense(units=node_size,
-                                   activation='relu'
-                                   )
+                             Dense(units=node_size)
                             )
-              self.model.add(Dropout(0.2))
+              self.model.add(Activation('relu'))
+              self.model.add(Dropout(0.3))
+#+END_SRC
+
+Adding a regularizer does not improve the model
+#+NAME: NeuralNet_init
+#+BEGIN_SRC python
+#          from keras import regularizers
+#          self.model.add(Dense(64, 
+#                          input_dim=64,
+#                          kernel_regularizer=regularizers.l2(0.01),
+#                          activity_regularizer=regularizers.l1(0.01))
+#                   )
 #+END_SRC
 
 #+NAME: NeuralNet_init
