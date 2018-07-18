@@ -1,9 +1,16 @@
 import serial
 from collections import namedtuple
 from Arduino import Arduino
+import time as t
 
-# arduino = serial.Serial('/dev/cu.wchusbserial1420', 115200)
+
+arduino = serial.Serial('/dev/cu.wchusbserial1420', 115200)
 board = Arduino('115200')
+
+Esc_pin = 6
+
+
+
 class PIDStruct():
     def __init__(self, input: float, Ki: float, Kp: float, Kd: float, oldError: float, dt: float, iState: float):
         self.input = input
@@ -34,8 +41,15 @@ class PID(object):
         self.updatedPid = False
         self.filterBuffer = [None] * self.buffersize
 
+    def trymap(x, in_min, in_max, out_min, out_max):
+        return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
+
     def constrain(val, min_val, max_val):
         return min(max_val, max(min_val, val))
+
+    def setSpeed(self, pin, drive):
+        uS = trymap(self.drive, 0, 1000, 1000, 2000)
+        board.Servos.writeMicroseconds(pin, uS)
 
     def filter(self, value):
         self.filteredVal -= self.filterBuffer[self.index] / self.buffersize
@@ -49,13 +63,13 @@ class PID(object):
         self.drive = 0
         self.updatedPid = False
         for i in range(0,self.buffersize):
-            self.angle_com = filter((-.3656 * board.analogRead()) + 185.64)
+            self.angle_com = filter((-.3656 * board.analogRead(0)) + 185.64)
         self.controller.iState = 0
         self.controller.oldError = self.controller.input - self.angle_com
 
     def updatePID(self):
         pTerm, iTerm, dTerm, error = 0
-        self.angle_com = filter((-.3656 * arduino.read()) + 185.64)
+        self.angle_com = filter((-.3656 * board.analogRead(0) + 185.64)
         error = self.controller.input - self.angle_com
         pTerm = self.controller.Kp * error
         self.controller.iState += error * self.controller.dt
@@ -63,10 +77,41 @@ class PID(object):
         iTerm = self.controller.Ki * self.controller.iState
         dTerm = self.controller.Kd * ((error - self.controller.oldError) / self.controller.dt)
         self.drive = pTerm + iTerm + dTerm
+        setSpeed(Esc_pin, self.drive)
         self.updatedPid = True
 
-    def arm(self, ESC):
 
+# no need for this function
+    # def arm(self, ESC):
+    def calibrate(self, pin):
+        arduino.write_line("Calibrating...")
+        board.digitalWrite(10, "LOW")
+        t.sleep(.5)
+        setSpeed(Esc_pin, 1000)
+        board.digitalWrite(10, "HIGH")
+        t.sleep(5)
+        setSpeed(Esc_pin, 0)
+        t.sleep(8)
+        arduino.write_line("Done")
+
+    def setup(self):
+        arduino.close()
+        arduino = serial.Serial('/dev/cu.wchusbserial1420', 115200)
+        board.Servos.attach(Esc_pin)
+        board.pinMode(10, "OUTPUT")
+        board.digitalWrite(10, "LOW")
+        self.controller.input = self.angle_com
+        self.controller.Kp = self.p_term
+        self.controller.Ki = self.i_term
+        self.controller.Kd = self.d_term
+        self.controller.dt = 1.0/self.frequency
+        arduino.write_line("press any key to arm or c to calibrate")
+        # while arduino.in_waiting && arduino.read():
+        # while !arduino.in_waiting
+        # if arduino.read().decode('utf-8').lower() == "c":
+        #     calibrate(Esc_pin)
+        # else:
+        #     arm(Esc_pin)
 
 """
 while True:
