@@ -75,3 +75,17 @@ class NeuralNet(object):
         metrics = []
         metrics = self.model.evaluate(X, Y, batch_size = 32, steps = steps)
         return metrics
+
+    """
+    predicts the labels of the data given
+
+    Inputs:
+    X - unlabeled test data
+    steps - number of iterations over the entire dataset before evaluation is completed
+
+    returns:
+    predictions - a numpy array of predictions
+    """
+    def label(self, X, steps):
+        predictions = self.model.predict(X, batch_size = 32, steps = steps)
+        return predictions
