@@ -14,8 +14,8 @@ Esc_pin = 6
 Class that acts as a mutable struct
 """
 class PIDStruct():
-    def __init__(self, input: float, Ki: float, Kp: float, Kd: float, oldError: float, dt: float, iState: float):
-        self.input = input
+    def __init__(self, input_, Ki, Kp, Kd, oldError, dt, iState):
+        self.input_ = input_
         self.Ki = Ki
         self.Kp = Kp
         self.Kd = Kd
@@ -103,7 +103,7 @@ class PID(object):
         for i in range(0,self.buffersize):
             self.angle_com = 0
         self.controller.iState = 0
-        self.controller.oldError = self.controller.input - self.angle_com
+        self.controller.oldError = self.controller.input_ - self.angle_com
 
     """
     updates PID values as soon as anew pitch request is made
@@ -117,7 +117,7 @@ class PID(object):
     def updatePID(self, com):
         pTerm, iTerm, dTerm, error = 0
         self.angle_com = com
-        error = self.controller.input - self.angle_com
+        error = self.controller.input_ - self.angle_com
         pTerm = self.controller.Kp * error
         self.controller.iState += error * self.controller.dt
         self.controller.iState = constrain(self.controller.iState, self.min_i_term/self.controller.Ki, self.max_i_term/self.controller.Ki)
@@ -156,7 +156,7 @@ class PID(object):
         # board.Servos.attach(Esc_pin)
         # board.pinMode(10, "OUTPUT")
         # board.digitalWrite(10, "LOW")
-        self.controller.input = self.angle_com
+        self.controller.input_ = self.angle_com
         self.controller.Kp = self.p_term
         self.controller.Ki = self.i_term
         self.controller.Kd = self.d_term
