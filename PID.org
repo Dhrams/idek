@@ -1,15 +1,21 @@
+
+#+BEGIN_SRC python :tangle read.py
 import serial
 from collections import namedtuple
 from Arduino import Arduino
 import time as t
+#+END_SRC
 
+#+BEGIN_SRC python :tangle read.py
 
 arduino = serial.Serial('/dev/cu.wchusbserial1420', 115200)
 board = Arduino('115200')
 
 Esc_pin = 6
+#+END_SRC
 
 
+#+BEGIN_SRC python :tangle read.py
 """
 Class that acts as a mutable struct
 """
@@ -22,6 +28,9 @@ class PIDStruct():
         self.oldError = oldError
         self.dt = dt
         self.iState = iState
+#+END_SRC
+
+#+BEGIN_SRC python :tangle read.py
 
 """
 class where the PID is implemented
@@ -45,6 +54,10 @@ class PID(object):
         self.index = 0
         self.updatedPid = False
         self.filterBuffer = [None] * self.buffersize
+#+END_SRC
+
+#+BEGIN_SRC python :tangle read.py
+
 
     """
     maps the given float to an integer value between out_min and out_max
@@ -63,6 +76,9 @@ class PID(object):
 
     def trymap(x, in_min, in_max, out_min, out_max):
         return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
+#+END_SRC
+
+#+BEGIN_SRC python :tangle read.py
 
     """
     constrains the value given to the range given
@@ -92,6 +108,9 @@ class PID(object):
     #     self.filteredVal += value / self.buffersize
     #     self.index %= self.buffersize
     #     return self.filteredVal
+#+END_SRC
+
+#+BEGIN_SRC python :tangle read.py
 
     """
     Resets the PID controller to initialized state
@@ -104,6 +123,9 @@ class PID(object):
             self.angle_com = 0
         self.controller.iState = 0
         self.controller.oldError = self.controller.input_ - self.angle_com
+#+END_SRC
+
+#+BEGIN_SRC python :tangle read.py
 
     """
     updates PID values as soon as anew pitch request is made
@@ -149,7 +171,9 @@ class PID(object):
 #        self.controller.Ki = float(input("Set Ki: (current val: %f)" % (self.controller.Ki)))
 #        self.controller.Kd = float(input("Set Kd: (current val: %f)" % (self.controller.Kd)))
 
+#+END_SRC
 
+#+BEGIN_SRC python :tangle read.py
     def setup(self):
         # arduino.close()
         # arduino = serial.Serial('/dev/cu.wchusbserial1420', 115200)
@@ -168,12 +192,16 @@ class PID(object):
         #     calibrate(Esc_pin)
         # else:
         #     arm(Esc_pin)
+#+END_SRC
+
+#+BEGIN_SRC python :tangle read.py
 
     def loop(self):
         t0, t1, exectime = 0
         t0 = t.time()
-        
+#+END_SRC
 
+#+BEGIN_SRC python :tangle read.py
 """
 while True:
     command = str(input ("Command: ")).encode('utf-8')       # query servo position
@@ -181,3 +209,4 @@ while True:
     reachedPos = str(arduino.readline())            # read serial port for arduino echo
     print(reachedPos)
 """
+#+END_SRC
