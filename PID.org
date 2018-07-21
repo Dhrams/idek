@@ -14,7 +14,7 @@ board = Arduino('115200')
 Esc_pin = 6
 #+END_SRC
 
-
+* PIDStruct
 #+BEGIN_SRC python :tangle read.py
 """
 Class that acts as a mutable struct
@@ -30,6 +30,7 @@ class PIDStruct():
         self.iState = iState
 #+END_SRC
 
+* PID
 #+BEGIN_SRC python :tangle read.py
 
 """
@@ -56,9 +57,8 @@ class PID(object):
         self.filterBuffer = [None] * self.buffersize
 #+END_SRC
 
+* trymap
 #+BEGIN_SRC python :tangle read.py
-
-
     """
     maps the given float to an integer value between out_min and out_max
 
@@ -73,11 +73,11 @@ class PID(object):
     mapped integer
 
     """
-
     def trymap(x, in_min, in_max, out_min, out_max):
         return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
 #+END_SRC
 
+* constrain
 #+BEGIN_SRC python :tangle read.py
 
     """
@@ -94,22 +94,9 @@ class PID(object):
     """
     def constrain(val, min_val, max_val):
         return min(max_val, max(min_val, val))
-
-    # def setSpeed(self, pin, drive):
-    #     uS = trymap(self.drive, 0, 1000, 1000, 2000)
-    #     board.Servos.writeMicroseconds(pin, uS)
-
-
-
-    # def filter(self, value):
-    #     self.filteredVal -= self.filterBuffer[self.index] / self.buffersize
-    #     self.filterBuffer[self.index] = value
-    #     self.index+=1
-    #     self.filteredVal += value / self.buffersize
-    #     self.index %= self.buffersize
-    #     return self.filteredVal
 #+END_SRC
 
+* resetsystem
 #+BEGIN_SRC python :tangle read.py
 
     """
@@ -125,6 +112,7 @@ class PID(object):
         self.controller.oldError = self.controller.input_ - self.angle_com
 #+END_SRC
 
+* updatePID
 #+BEGIN_SRC python :tangle read.py
 
     """
@@ -150,29 +138,9 @@ class PID(object):
         self.updatedPid = True
         return self.updatedPid
 
-# no need for this function
-    # def arm(self, ESC):
-    # def calibrate(self, pin):
-    #     arduino.write_line("Calibrating...")
-    #     board.digitalWrite(10, "LOW")
-    #     t.sleep(.5)
-    #     setSpeed(Esc_pin, 1000)
-    #     board.digitalWrite(10, "HIGH")
-    #     t.sleep(5)
-    #     setSpeed(Esc_pin, 0)
-    #     t.sleep(8)
-    #     arduino.write_line("Done")
-
-#    """
-#    Allows user to set PID values
-#    """
-#    def tune(self):
-#        self.controller.Kp = float(input("Set Kp: (current val: %f)" % (self.controller.Kp)))
-#        self.controller.Ki = float(input("Set Ki: (current val: %f)" % (self.controller.Ki)))
-#        self.controller.Kd = float(input("Set Kd: (current val: %f)" % (self.controller.Kd)))
-
 #+END_SRC
 
+* setup
 #+BEGIN_SRC python :tangle read.py
     def setup(self):
         # arduino.close()
@@ -194,8 +162,8 @@ class PID(object):
         #     arm(Esc_pin)
 #+END_SRC
 
+* loop
 #+BEGIN_SRC python :tangle read.py
-
     def loop(self):
         t0, t1, exectime = 0
         t0 = t.time()
