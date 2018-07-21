@@ -141,13 +141,13 @@ class PID(object):
     #     t.sleep(8)
     #     arduino.write_line("Done")
 
-    """
-    Allows user to set PID values
-    """
-    def tune(self):
-        self.controller.Kp = float(input("Set Kp: (current val: %f)" % (self.controller.Kp)))
-        self.controller.Ki = float(input("Set Ki: (current val: %f)" % (self.controller.Ki)))
-        self.controller.Kd = float(input("Set Kd: (current val: %f)" % (self.controller.Kd)))
+#    """
+#    Allows user to set PID values
+#    """
+#    def tune(self):
+#        self.controller.Kp = float(input("Set Kp: (current val: %f)" % (self.controller.Kp)))
+#        self.controller.Ki = float(input("Set Ki: (current val: %f)" % (self.controller.Ki)))
+#        self.controller.Kd = float(input("Set Kd: (current val: %f)" % (self.controller.Kd)))
 
 
     def setup(self):
