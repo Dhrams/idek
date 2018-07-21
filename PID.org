@@ -126,7 +126,7 @@ def updatePID(self, com):
     self.drive = pTerm + iTerm + dTerm
     # setSpeed(Esc_pin, self.drive)
     self.updatedPid = True
-    return self.updatedPid
+    return self.drive
  #+END_SRC
 
 
