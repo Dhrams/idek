@@ -130,23 +130,6 @@ def updatePID(self, com):
  #+END_SRC
 
 
-* loop
-#+BEGIN_SRC python :tangle read.py
-    def loop(self):
-        t0, t1, exectime = 0
-        t0 = t.time()
-#+END_SRC
-
-#+BEGIN_SRC python :tangle read.py
-"""
-while True:
-    command = str(input ("Command: ")).encode('utf-8')       # query servo position
-    arduino.write(command)                          # write position to serial port
-    reachedPos = str(arduino.readline())            # read serial port for arduino echo
-    print(reachedPos)
-"""
-#+END_SRC
-
 * trymap
 #+BEGIN_SRC python :tangle read.py
 """
@@ -184,4 +167,23 @@ value within the range given
 """
 def constrain(val, min_val, max_val):
     return min(max_val, max(min_val, val))
+#+END_SRC
+
+* __main__
+#+BEGIN_SRC python :tangle read.py 
+
+if __name__ == '__main__':
+    p_term = 0
+    i_term = 0
+    d_term = 0 
+    angle_com = 0
+    pid = PID.setup(p_term=p_term,
+                  i_term=i_term,
+                  d_term=d_term,
+                  angle_com=angle_com
+                  )
+    pid.resetsystem()
+    while True:
+        ans = pid.updatePID(com)
+        print(ans)
 #+END_SRC
