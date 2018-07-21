@@ -1,3 +1,5 @@
+from keras.layers import LSTM
+
 class NeuralNet(object):
 
     def __init__(self,
@@ -9,12 +11,19 @@ class NeuralNet(object):
                     self.model = Sequential()
                     from keras.layers import Dense
                     # First layer requires input dimension ie input_node_size
-                    self.model.add(
-                                   Dense(units=64,
-                                         activation='relu',
-                                         input_dim=input_node_size
-                                         )
-                                  )
+
+                    self.model.add(LSTM(
+                                        units = 64
+                                        activation = 'relu'
+                                        input_dim = input_node_size
+                                        ))
+
+                    # self.model.add(
+                    #                Dense(units=64,
+                    #                      activation='relu',
+                    #                      input_dim=input_node_size
+                    #                      )
+                    #               )
                     # Add layers to model for all hidden layers
                     for node_size in hidden_layer_node_size:
                         self.model.add(
@@ -33,3 +42,50 @@ class NeuralNet(object):
                                        optimizer='sgd',
                                        metrics=['accuracy'])
                     #model.fit(x_train, y_train, epochs=5, batch_size=32)
+
+
+    """
+    fit the model with training datasets
+
+    inputs:
+    train_x - training data
+    train_y - training labels
+    epochs - number of iterations over the entirity of both the x and y data desired
+
+    returns:
+    Nothing
+
+    """
+    def train(self, train_x, train_y, epochs):
+        self.model.fit(train_x, train_y, epochs, batch_size = 32)
+
+    """
+    evaluates the model with test data
+
+    inputs:
+    X - test data
+    Y - test labels
+    steps - number of iterations over the entire dataset before evaluation is completed
+
+    returns:
+    metrics - the test losses as well as the metric defined in __init__, which in this case is accuracy
+    """
+
+    def run(self, X, Y, steps):
+        metrics = []
+        metrics = self.model.evaluate(X, Y, batch_size = 32, steps = steps)
+        return metrics
+
+    """
+    predicts the labels of the data given
+
+    Inputs:
+    X - unlabeled test data
+    steps - number of iterations over the entire dataset before evaluation is completed
+
+    returns:
+    predictions - a numpy array of predictions
+    """
+    def label(self, X, steps):
+        predictions = self.model.predict(X, batch_size = 32, steps = steps)
+        return predictions
