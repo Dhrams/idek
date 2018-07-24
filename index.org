@@ -51,19 +51,36 @@ from matplotlib import pyplot as plt
 
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
-p_term = 3
-i_term = 1.5
-d_term = 0.4 
-angle_com = 0
-pid = PID(p_term=p_term,
-          i_term=i_term,
-          d_term=d_term,
-          angle_com=angle_com
-                )
-pid.resetSystem()
-while True:
-    ans = pid.updatePID(angle_com)
-    print(ans)
+def simulation(theta, pitch):
+    p_term = 3
+    i_term = 1.5
+    d_term = 0.4 
+    angle_com = 0
+    pid = PID(p_term=p_term,
+              i_term=i_term,
+              d_term=d_term,
+              angle_com=angle_com
+                    )
+    pid.resetSystem()
+    if theta >= pid.minAngle & theta <= pid.maxAngle:
+        pid.controller.oldError = theta - pid.angle_com
+        pid.controller.input = theta
+        pid.updatePID(pitch)
+    if pid.updatedPid:
+        print(pid.angle_com)
+        print("\t")
+        print(pid.drive)
+        print("\t")
+        print(pid.controller.input)
+        pid.updatedPid = False
+
+
+    while True:
+        angle = int(input("Give an angle: "))
+        pitch = int(input("give a pitch: "))
+        simulation(angle, pitch)
+
+
 #+END_SRC
 
 
