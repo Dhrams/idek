@@ -10,7 +10,7 @@ np.random.seed(123)
 #+END_SRC
 
 #+RESULTS:
-: # Out[1]:
+: # Out[2]:
 
 #+BEGIN_SRC ipython :session
 from keras import backend as K
@@ -51,8 +51,8 @@ plt.imshow(X_train[0])
 #+RESULTS:
 :RESULTS:
 # Out[5]:
-: <matplotlib.image.AxesImage at 0x7f86464cfef0>
-[[file:./obipy-resources/3881t5X.png]]
+: <matplotlib.image.AxesImage at 0x7fa9632d7240>
+[[file:./obipy-resources/13609NFR.png]]
 :END:
 
 #+BEGIN_SRC ipython :session
@@ -76,7 +76,7 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 #+END_SRC
 
 #+RESULTS:
-: # Out[9]:
+: # Out[6]:
 
 #+BEGIN_SRC ipython :noweb yes :session
 # Class Definition of Neural Net
@@ -84,7 +84,7 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 #+END_SRC
 
 #+RESULTS:
-: # Out[13]:
+: # Out[7]:
 
 #+BEGIN_SRC ipython :session
 net = NeuralNet(input_node_size = 784,
@@ -94,15 +94,15 @@ net = NeuralNet(input_node_size = 784,
 #+END_SRC
 
 #+RESULTS:
-: # Out[14]:
+: # Out[8]:
 
 #+BEGIN_SRC ipython :session
 net.model.fit(X_train, Y_train, epochs=6, batch_size=128)
 #+End_SRC
 
 #+RESULTS:
-: # Out[15]:
-: : <keras.callbacks.History at 0x7f864ab2cc18>
+: # Out[9]:
+: : <keras.callbacks.History at 0x7fa9689891d0>
 
 
 
@@ -118,8 +118,12 @@ net.model.fit(X_train, Y_train, epochs=6, batch_size=128)
                    hidden_layers_node_size = []          # Number of nodes in each hidden layer
                   ):
                       <<NeuralNet_init>>
+      <<NeuralNet_train>>
+      <<NeuralNet_run>>
+      <<NeuralNet_train>>
 #+END_SRC
 
+** init
 The Sequential model is a linear stack of layers. We pass in a list of layer instances to it to make a Neural Net.
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
@@ -133,19 +137,13 @@ Let's import the core layers from Keras which are almost always used.
           from keras.layers import Dense, Dropout, Activation, Flatten
 #+END_SRC
 
-#+NAME: NeuralNet_init
-#+BEGIN_SRC python
-          from keras.layers import Convolution2D, MaxPooling2D
-#+END_SRC
-
 The model should know what input shape it should expect. For this reason, we sepcifiy an input size for the first layer.
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
           # First layer requires input dimension ie input_shape
-
           self.model.add(
-                         Dense(units=input_node_size,
-                               input_shape=input_shape
+                         LSTM(units=64,
+                               input_dim=input_node_size
                                )
                          )
           self.model.add(Activation('relu'))
@@ -166,7 +164,7 @@ Adding a regularizer does not improve the model
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
 #          from keras import regularizers
-#          self.model.add(Dense(64, 
+#          self.model.add(Dense(64,
 #                          input_dim=64,
 #                          kernel_regularizer=regularizers.l2(0.01),
 #                          activity_regularizer=regularizers.l1(0.01))
@@ -192,6 +190,74 @@ Adding a regularizer does not improve the model
                              metrics=['accuracy'])
           #model.fit(x_train, y_train, epochs=5, batch_size=32)
 #+END_SRC
+
+
+
+
+
+
+** train
+
+fit the model with training datasets
+
+inputs:
+train_x - training data
+train_y - training labels
+epochs - number of iterations over the entirity of both the x and y data desired
+
+returns:
+Nothing
+
+#+NAME: NeuralNet_train
+#+BEGIN_SRC python
+    def train(self, train_x, train_y, epochs):
+        self.model.fit(train_x, train_y, epochs, batch_size = 32)
+#+END_SRC
+
+** run
+
+
+evaluates the model with test data
+
+inputs:
+X - test data
+Y - test labels
+steps - number of iterations over the entire dataset before evaluation is completed
+
+returns:
+metrics - the test losses as well as the metric defined in __init__, which in this case is accuracy
+
+#+NAME: NeuralNet_run
+#+BEGIN_SRC python
+    def run(self, X, Y, steps):
+        metrics = []
+        metrics = self.model.evaluate(X, Y, batch_size = 32, steps = steps)
+        return metrics
+#+END_SRC
+
+
+** label
+
+predicts the labels of the data given
+
+Inputs:
+X - unlabeled test data
+steps - number of iterations over the entire dataset before evaluation is completed
+
+returns:
+predictions - a numpy array of predictions
+ 
+#+NAME: NeuralNet_label
+#+BEGIN_SRC python
+    def label(self, X, steps):
+        predictions = self.model.predict(X, batch_size = 32, steps = steps)
+        return predictions
+#+END_SRC
+
+
+
+
+
 
 
 
