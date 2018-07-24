@@ -42,23 +42,25 @@ from matplotlib import pyplot as plt
 :END:
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
-# Class Definition of Neural Net
+# Class Definition of PID
 <<PID>>
-<<
 #+END_SRC
+
+#+RESULTS:
+: # Out[53]:
 
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
-p_term = 0
-i_term = 0
-d_term = 0 
+p_term = 3
+i_term = 1.5
+d_term = 0.4 
 angle_com = 0
-pid = PID.setup(p_term=p_term,
-                i_term=i_term,
-                d_term=d_term,
-                angle_com=angle_com
+pid = PID(p_term=p_term,
+          i_term=i_term,
+          d_term=d_term,
+          angle_com=angle_com
                 )
-pid.resetsystem()
+pid.resetSystem()
 while True:
     ans = pid.updatePID(angle_com)
     print(ans)
@@ -256,7 +258,7 @@ predictions - a numpy array of predictions
 ** PIDStruct
 
 #+NAME: PID 
-#+BEGIN_SRC python :tangle read.py
+#+BEGIN_SRC python :tangle pid.py
  """
  Class that acts as a mutable struct
  """
@@ -272,7 +274,8 @@ predictions - a numpy array of predictions
  #+END_SRC
 
 ** PID
- #+BEGIN_SRC python :tangle read.py :noweb yes
+#+NAME: PID
+ #+BEGIN_SRC python :tangle pid.py :noweb yes
 
  """
  class where the PID is implemented
@@ -297,13 +300,13 @@ predictions - a numpy array of predictions
          self.updatedPid = False
          self.filterBuffer = [None] * self.buffersize
 
-     <<setup>>
-     <<resetsystem>>
-     <<updatePID>>
+     <<PID_setup>>
+     <<PID_resetsystem>>
+     <<PID_updatePID>>
  #+END_SRC
 
 *** setup
- #+NAME: setup
+ #+NAME: PID_setup
   #+BEGIN_SRC python
   def setup(self):
       # arduino.close()
@@ -326,7 +329,7 @@ predictions - a numpy array of predictions
   #+END_SRC
 
 *** resetsystem
- #+NAME: resetsystem
+ #+NAME: PID_resetsystem
   #+BEGIN_SRC python
 
   """
@@ -343,8 +346,8 @@ predictions - a numpy array of predictions
   #+END_SRC
 
 *** updatePID
- #+NAME: updatePID
-  #+BEGIN_SRC python
+ #+NAME: PID_updatePID
+  #+BEGIN_SRC python :noweb yes
 
  """
  updates PID values as soon as anew pitch request is made
@@ -356,7 +359,11 @@ predictions - a numpy array of predictions
  updatedPid - boolean for if the PID has been updated or not
  """
  def updatePID(self, com):
-     pTerm, iTerm, dTerm, error = 0
+
+     <<PID_trymap>>
+     <<PID_constrain>>
+
+     pTerm, iTerm, dTerm, error = 0,0,0,0
      self.angle_com = com
      error = self.controller.input_ - self.angle_com
      pTerm = self.controller.Kp * error
@@ -371,42 +378,44 @@ predictions - a numpy array of predictions
   #+END_SRC
 
 
-** trymap
- #+BEGIN_SRC python :tangle read.py
- """
- maps the given float to an integer value between out_min and out_max
+**** trymap
+  #+NAME: PID_trymap
+   #+BEGIN_SRC python :tangle read.py
+   """
+   maps the given float to an integer value between out_min and out_max
 
- input:
- x - value to map
- in_min - min value that val is within, usually 0
- in_max - max value that val can be
- out_min - min value that val is to be mapped to
- out_max - max value that val is to be mapped to
+   input:
+   x - value to map
+   in_min - min value that val is within, usually 0
+   in_max - max value that val can be
+   out_min - min value that val is to be mapped to
+   out_max - max value that val is to be mapped to
 
- returns:
- mapped integer
+   returns:
+   mapped integer
 
- """
- def trymap(x, in_min, in_max, out_min, out_max):
-     return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
- #+END_SRC
+   """
+   def trymap(x, in_min, in_max, out_min, out_max):
+       return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
+   #+END_SRC
 
-** constrain
- #+BEGIN_SRC python :tangle read.py
+**** constrain
+  #+NAME: PID_constrain
+   #+BEGIN_SRC python :tangle read.py
 
- """
- constrains the value given to the range given
+   """
+   constrains the value given to the range given
 
- input:
- val - the value to be constrained
- min_val - min value that val can be
- max_val - max valuse that val can be
+   input:
+   val - the value to be constrained
+   min_val - min value that val can be
+   max_val - max valuse that val can be
 
- returns:
- value within the range given
+   returns:
+   value within the range given
 
- """
- def constrain(val, min_val, max_val):
-     return min(max_val, max(min_val, val))
- #+END_SRC
+   """
+   def constrain(val, min_val, max_val):
+       return min(max_val, max(min_val, val))
+   #+END_SRC
 
