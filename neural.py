@@ -39,7 +39,7 @@ class NeuralNet(object):
                                   )
                     # Compile model
                     self.model.compile(loss='categorical_crossentropy',
-                                       optimizer='sgd',
+                                       optimizer='Nadam',
                                        metrics=['accuracy'])
                     #model.fit(x_train, y_train, epochs=5, batch_size=32)
 
