@@ -29,3 +29,37 @@ value within the range given
 """
 def constrain(val, min_val, max_val):
     return min(max_val, max(min_val, val))
+
+"""
+Not really a simulation I dont think, idk anymore tbh
+
+inputs:
+theta - desired angle
+
+returns:
+Prints pitch, drive, and angle given
+
+"""
+
+
+
+def simulation(theta, pitch):
+    pid = PID(3,1.5,.4,0)
+    pid.setup()
+    if theta >= pid.minAngle & theta <= pid.maxAngle:
+        pid.controller.oldError = theta - pid.angle_com
+        pid.controller.input = theta
+        pid.updatePID(pitch)
+    if pid.updatedPid:
+        print(pid.angle_com)
+        print("\t")
+        print(pid.drive)
+        print("\t")
+        print(pid.controller.input)
+        pid.updatedPid = False
+
+
+while True:
+    angle = int(input("Give an angle: "))
+    pitch = int(input("give a pitch: "))
+    simulation(angle, pitch)

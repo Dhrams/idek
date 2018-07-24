@@ -8,6 +8,7 @@ class NeuralNet(object):
                 ):
                     from keras.models import Sequential
                     self.model = Sequential()
+<<<<<<< Updated upstream
                     from keras.layers import Dense, Dropout, Activation, Flatten, LSTM
                     # First layer requires input dimension ie input_shape
                     self.model.add(
@@ -16,10 +17,33 @@ class NeuralNet(object):
                                          )
                                    )
                     self.model.add(Activation('relu'))
+=======
+                    from keras.layers import Dense
+                    # First layer requires input dimension ie input_node_size
+
+                    self.model.add(LSTM(
+                                        units = 64,
+                                        activation = 'relu',
+                                        input_dim = input_node_size
+                                        ))
+
+                    # self.model.add(
+                    #                Dense(units=64,
+                    #                      activation='relu',
+                    #                      input_dim=input_node_size
+                    #                      )
+                    #               )
+>>>>>>> Stashed changes
                     # Add layers to model for all hidden layers
                     for node_size in hidden_layers_node_size:
                         self.model.add(
+<<<<<<< Updated upstream
                                        Dense(units=node_size)
+=======
+                                       Dense(units=node_size,
+                                             activation ='relu'
+                                             )
+>>>>>>> Stashed changes
                                       )
                         self.model.add(Activation('relu'))
                         self.model.add(Dropout(0.3))
