@@ -18,13 +18,6 @@ class NeuralNet(object):
                     self.model.add(Activation('relu'))
                     from keras.layers import Dense
                     # First layer requires input dimension ie input_node_size
-
-                    self.model.add(LSTM(
-                                        units = 64,
-                                        activation = 'relu',
-                                        input_dim = input_node_size
-                                        ))
-
                     # self.model.add(
                     #                Dense(units=64,
                     #                      activation='relu',
@@ -35,9 +28,6 @@ class NeuralNet(object):
                     for node_size in hidden_layers_node_size:
                         self.model.add(
                                        Dense(units=node_size)
-                                       Dense(units=node_size,
-                                             activation ='relu'
-                                             )
                                       )
                         self.model.add(Activation('relu'))
                         self.model.add(Dropout(0.3))

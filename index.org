@@ -51,6 +51,9 @@ from matplotlib import pyplot as plt
 
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
+import random as rand
+import time as t
+
 def simulation(theta, pitch):
     p_term = 3
     i_term = 1.5
@@ -61,6 +64,7 @@ def simulation(theta, pitch):
               d_term=d_term,
               angle_com=angle_com
                     )
+    pid.setup()
     pid.resetSystem()
     if theta >= pid.minAngle & theta <= pid.maxAngle:
         pid.controller.oldError = theta - pid.angle_com
@@ -74,14 +78,20 @@ def simulation(theta, pitch):
         print(pid.controller.input)
         pid.updatedPid = False
 
+timeout = t.time() + 100
 
-    while True:
-        angle = int(input("Give an angle: "))
-        pitch = int(input("give a pitch: "))
-        simulation(angle, pitch)
+while True:
+    angle = rand.randint(-65, 30)
+    pitch = rand.randint(-65,10)
+    simulation(angle, pitch)
+    if t.time() > timeout:
+        break
 
 
 #+END_SRC
+
+#+RESULTS:
+: # Out[1]:
 
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
@@ -107,6 +117,7 @@ net = NeuralNet(input_node_size = 784,
 
 #+RESULTS:
 : # Out[36]:
+
 
 
 
@@ -272,7 +283,9 @@ predictions - a numpy array of predictions
 
 
 * PID Controller
+
 ** PIDStruct
+
 
 #+NAME: PID 
 #+BEGIN_SRC python :tangle pid.py
