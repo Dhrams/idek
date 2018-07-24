@@ -8,7 +8,7 @@ class NeuralNet(object):
                 ):
                     from keras.models import Sequential
                     self.model = Sequential()
-                    from keras.layers import Dense, Dropout, Activation, Flatten
+                    from keras.layers import Dense, Dropout, Activation, Flatten, LSTM
                     # First layer requires input dimension ie input_shape
                     self.model.add(
                                    LSTM(units=64,
@@ -46,5 +46,6 @@ class NeuralNet(object):
         metrics = []
         metrics = self.model.evaluate(X, Y, batch_size = 32, steps = steps)
         return metrics
-    def train(self, train_x, train_y, epochs):
-        self.model.fit(train_x, train_y, epochs, batch_size = 32)
+    def label(self, X, steps):
+        predictions = self.model.predict(X, batch_size = 32, steps = steps)
+        return predictions

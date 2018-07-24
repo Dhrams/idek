@@ -7,12 +7,7 @@ First we import number and set its random seed to a fixed number for reproducibi
 import numpy as np
 # For reproducibility
 np.random.seed(123)
-#+END_SRC
 
-#+RESULTS:
-: # Out[2]:
-
-#+BEGIN_SRC ipython :session
 from keras import backend as K
 import os
 
@@ -28,81 +23,45 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[3]:
-
-We'll be using MNIST data to verify that we have a model that works.
-#+BEGIN_SRC ipython :session
-# Load pre-shuffled MNIST data into train and test sets
-from keras.datasets import mnist
-(X_train, y_train), (X_test, y_test) = mnist.load_data()
-#+END_SRC
-
-#+RESULTS:
-: # Out[4]:
+: # Out[32]:
 
 Plotting the first image in the training data so that we have an idea of what we're looking at.
 #+BEGIN_SRC ipython :session :results raw drawer
 %matplotlib inline
 # Visualize data
 from matplotlib import pyplot as plt
-plt.imshow(X_train[0])
+# plt.imshow(X_train[0])
 #+END_SRC
 
 #+RESULTS:
 :RESULTS:
-# Out[5]:
-: <matplotlib.image.AxesImage at 0x7fa9632d7240>
-[[file:./obipy-resources/13609NFR.png]]
+# Out[33]:
 :END:
 
-#+BEGIN_SRC ipython :session
-nb_classes = 10
 
-X_train = X_train.reshape(60000, 784)
-X_test = X_test.reshape(10000, 784)
-X_train = X_train.astype('float32')
-X_test = X_test.astype('float32')
-
-# normalize the dataset
-# 25from keras import regularizers
-# Normally, we would use sklearn.preprocessing.MinMaxScaler
-X_train /= 255
-X_test /= 255
-
-from keras.utils import np_utils
-# Convert 1-dimensional class arrays to 10-dimensional class matrices
-Y_train = np_utils.to_categorical(y_train, nb_classes)
-Y_test = np_utils.to_categorical(y_test, nb_classes)
-#+END_SRC
-
-#+RESULTS:
-: # Out[6]:
-
-#+BEGIN_SRC ipython :noweb yes :session
+#+BEGIN_SRC ipython :noweb yes :session :exports none
 # Class Definition of Neural Net
 <<NeuralNet>>
 #+END_SRC
 
 #+RESULTS:
-: # Out[7]:
+: # Out[34]:
 
 #+BEGIN_SRC ipython :session
 net = NeuralNet(input_node_size = 784,
                 output_node_size = 10,
-                input_shape = (784,),
                 hidden_layers_node_size = [512])
 #+END_SRC
 
 #+RESULTS:
-: # Out[8]:
+: # Out[35]:
 
 #+BEGIN_SRC ipython :session
-net.model.fit(X_train, Y_train, epochs=6, batch_size=128)
+# net.train(X_train, Y_train, epochs=6)
 #+End_SRC
 
 #+RESULTS:
-: # Out[9]:
-: : <keras.callbacks.History at 0x7fa9689891d0>
+: # Out[36]:
 
 
 
@@ -120,7 +79,7 @@ net.model.fit(X_train, Y_train, epochs=6, batch_size=128)
                       <<NeuralNet_init>>
       <<NeuralNet_train>>
       <<NeuralNet_run>>
-      <<NeuralNet_train>>
+      <<NeuralNet_label>>
 #+END_SRC
 
 ** init
@@ -134,7 +93,7 @@ The Sequential model is a linear stack of layers. We pass in a list of layer ins
 Let's import the core layers from Keras which are almost always used.
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
-          from keras.layers import Dense, Dropout, Activation, Flatten
+          from keras.layers import Dense, Dropout, Activation, Flatten, LSTM
 #+END_SRC
 
 The model should know what input shape it should expect. For this reason, we sepcifiy an input size for the first layer.
