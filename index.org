@@ -26,7 +26,7 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[32]:
+: # Out[15]:
 
 # Plotting the first image in the training data so that we have an idea of what we're looking at.
 #+BEGIN_SRC ipython :session :results raw drawer :exports none
@@ -38,7 +38,7 @@ from matplotlib import pyplot as plt
 
 #+RESULTS:
 :RESULTS:
-# Out[33]:
+# Out[16]:
 :END:
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
@@ -48,7 +48,7 @@ from matplotlib import pyplot as plt
 #+END_SRC
 
 #+RESULTS:
-: # Out[11]:
+: # Out[17]:
 
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
@@ -87,8 +87,10 @@ def simulation(theta, pitch):
 
 timeout = t.time() + 1
 
+angle = rand.randint(-65, 30)
+
 while True:
-    angle = rand.randint(-65, 30)
+
     pitch = rand.randint(-65, 10)
     simulation(angle, pitch)
     if t.time() > timeout:
@@ -98,7 +100,7 @@ while True:
 #+END_SRC
 
 #+RESULTS:
-: # Out[12]:
+: # Out[20]:
 
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
