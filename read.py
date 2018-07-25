@@ -1,3 +1,5 @@
+import pid as p
+
 """
 maps the given float to an integer value between out_min and out_max
 
@@ -44,18 +46,18 @@ Prints pitch, drive, and angle given
 
 
 def simulation(theta, pitch):
-    pid = PID(3,1.5,.4,0)
+    pid = p.PID(3,1.5,.4,0)
     pid.setup()
     if theta >= pid.minAngle & theta <= pid.maxAngle:
         pid.controller.oldError = theta - pid.angle_com
-        pid.controller.input = theta
+        pid.controller.input_ = theta
         pid.updatePID(pitch)
     if pid.updatedPid:
         print(pid.angle_com)
         print("\t")
         print(pid.drive)
         print("\t")
-        print(pid.controller.input)
+        print(pid.controller.input_)
         pid.updatedPid = False
 
 

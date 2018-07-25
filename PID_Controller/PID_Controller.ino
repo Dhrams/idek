@@ -99,29 +99,58 @@ void updatePID() {
 
   // Measure and filter rotary sensor value
   pitch = filter((-0.3656 * analogRead(SENSOR_PIN)) + 185.64);
+
+ 
   
   // Controller error is difference between input and current state
   float error = controller.input - pitch;
 
+  Serial.print("error: ");
+  Serial.print(error);
+  Serial.print("\n");
+  
+
   // Calculate the proportional term
   pTerm = controller.Kp * error;
+
+  Serial.print("pTerm: ");
+  Serial.print(pTerm);
+  Serial.print("\n");
+
+  Serial.print("dt: ");
+  Serial.print(controller.dt);
+  Serial.print("\n");
 
   // Calculate the integral state with appropriate min/max constraints
   controller.iState += error * controller.dt;
   controller.iState = constrain(controller.iState, MIN_I_TERM/controller.Ki, MAX_I_TERM/controller.Ki);
 
+  Serial.print("iState: ");
+  Serial.print(controller.iState);
+  Serial.print("\n");
+  
+
   // Calculate the integral term
   iTerm  = controller.Ki * controller.iState;
+
+  Serial.print("iTerm: ");
+  Serial.print(iTerm);
+  Serial.print("\n");
 
   // Calculate the derivative term
   dTerm  = controller.Kd * ((error - controller.old_error)/controller.dt);
 
+  Serial.print("dTerm: ");
+  Serial.print(dTerm);
+  Serial.print("\n");
   // Update the dState of the controller
   controller.old_error = error;
 
   // Add PID terms to get new drive signal (0-1000 scale)
   drive = pTerm + iTerm + dTerm;
-
+  Serial.print("drive: ");
+  Serial.print(drive);
+  Serial.print("\n");
   // Send new drive signal to ESC
   setSpeed(&ESC, drive);
 
@@ -255,6 +284,21 @@ void loop() {
   if (Serial.available()) {
     // 'p' for pause
     if (Serial.peek() == 'p') {
+      MsTimer2::stop();   // Disable interrupts
+      Serial.read();      // Flush buffer
+      setSpeed(&ESC, 0);  // Kill power to the motor(s)
+      
+      // wait for ready
+      Serial.println("Send any character to resume...");
+      while (Serial.available() && Serial.read()); // empty buffer
+      while (!Serial.available());                 // wait for data
+      while (Serial.available() && Serial.read()); // empty buffer again
+
+      // Reset system parameters before resuming to avoid unpredictable behavior 
+      resetSystem();
+
+      // Re-enable interrupts and continue
+      MsTimer2::start();
     }
     // 't' for tune
     else if (Serial.peek() == 't') {

@@ -26,7 +26,7 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[2]:
+: # Out[32]:
 
 # Plotting the first image in the training data so that we have an idea of what we're looking at.
 #+BEGIN_SRC ipython :session :results raw drawer :exports none
@@ -38,16 +38,17 @@ from matplotlib import pyplot as plt
 
 #+RESULTS:
 :RESULTS:
-# Out[3]:
+# Out[33]:
 :END:
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
 # Class Definition of PID
 <<PID>>
+
 #+END_SRC
 
 #+RESULTS:
-: # Out[8]:
+: # Out[9]:
 
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
@@ -65,47 +66,33 @@ def simulation(theta, pitch):
               angle_com=angle_com
                     )
     pid.setup()
-    pid.resetSystem()
+    # pid.resetSystem()
     if theta >= pid.minAngle & theta <= pid.maxAngle:
         pid.controller.oldError = theta - pid.angle_com
         pid.controller.input_ = theta
         pid.updatePID(pitch)
-        print("poop")
     if pid.updatedPid:
-        print(pid.angle_com)
+        print("pitch: %f" % (pid.angle_com))
         print("\t")
-        print(pid.drive)
+        print("drive: %f" % (pid.drive))
         print("\t")
-        print(pid.controller.input_)
+        print("input: %f" % (pid.controller.input_))
         pid.updatedPid = False
-    
 
-<<<<<<< HEAD
-timeout = t.time() + 100
+timeout = t.time() + 1
 
 while True:
     angle = rand.randint(-65, 30)
-    pitch = rand.randint(-65,10)
+    pitch = rand.randint(-65, 10)
     simulation(angle, pitch)
     if t.time() > timeout:
         break
 
-=======
-for i in range(0,100):
-    angle = 10
-    pitch = 40
-    simulation(angle, pitch)
-    
->>>>>>> 860a423273853be59577cfdea6e2cdd992cb48b4
 
 #+END_SRC
 
 #+RESULTS:
-<<<<<<< HEAD
-: # Out[1]:
-=======
-: # Out[12]:
->>>>>>> 860a423273853be59577cfdea6e2cdd992cb48b4
+: # Out[10]:
 
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
