@@ -48,13 +48,19 @@ from matplotlib import pyplot as plt
 #+END_SRC
 
 #+RESULTS:
-: # Out[9]:
+: # Out[11]:
 
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
 import random as rand
 import time as t
+"""
 
+ we need something similar to mstimer2 to be able to make 
+ something work i believe. but the weird numbers achieved 
+ might also be the result of the randint doing whatever it wants... dunno
+
+"""
 def simulation(theta, pitch):
     p_term = 3
     i_term = 1.5
@@ -66,7 +72,7 @@ def simulation(theta, pitch):
               angle_com=angle_com
                     )
     pid.setup()
-    # pid.resetSystem()
+    # ppid.resetSystem()
     if theta >= pid.minAngle & theta <= pid.maxAngle:
         pid.controller.oldError = theta - pid.angle_com
         pid.controller.input_ = theta
@@ -92,7 +98,7 @@ while True:
 #+END_SRC
 
 #+RESULTS:
-: # Out[10]:
+: # Out[12]:
 
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
