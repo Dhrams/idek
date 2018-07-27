@@ -1,5 +1,6 @@
 #include "Servo.h"
 #include "MsTimer2.h"
+#include "stdio.h"
 
 /* Default Tuning Variables */
 #define P_GAIN          (3)     // Proportional gain
@@ -44,6 +45,11 @@ volatile bool updatedPID; // Flag to indicate whenever controller is updated
 float filterBuffer[BUFFER_SIZE];  // Array for moving average filter
 float filteredVal;                // Current filtered valued
 int index;                        // Current index of filterBuffer
+
+int count;
+bool countChanged = false;
+//char* why;
+//FILE *fp = fopen("~/idek/icantbelieveyouvedonethis.csv", "w");
 
 // ================================================================
 // ===                    HELPER FUNCTIONS                      ===
@@ -384,12 +390,39 @@ void loop() {
   }
 
   // Print pitch and drive info to serial after PID updates
-  if (updatedPID) {
+//  if (updatedPID) {
+//    if (countChanged) {
+//      sprintf(why, "~/idek/icantbelieveyouvedonethis%d.csv", count);
+//      fp = fopen(why, "w");
+//      countChanged = false;
+//    }
+//     
+//    fprintf(fp, "pitch: %d", pitch);
+//    fprintf(fp, "error: %d", controller.old_error);
+//    fprintf(fp, "input_: %d", controller.input);
+//    fprintf(fp, "drive: %d", drive);
+//    if (controller.old_error >= 9) {
+//      count++;
+//      countChanged = true;
+//    }
+    if (countChanged) {
+      Serial.print("end");
+      Serial.print("\n");
+      Serial.print("\n");
+      Serial.print("\n");
+      Serial.print("\n");
+      Serial.print("\n");
+      Serial.print("\n");
+      countChanged = false;
+    }
+    Serial.print("pitch: ");
     Serial.print(pitch, 2);
-    Serial.print("\t");
+    Serial.print(",");
+    Serial.print("drive: ");
     Serial.print(drive);
-    Serial.print("\t");
-    Serial.println(controller.input);
+    Serial.print(",");
+    Serial.print("input: ");
+    Serial.println(controller.input)
     updatedPID = false;
   }
 }
