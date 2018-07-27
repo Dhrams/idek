@@ -111,52 +111,52 @@ void updatePID() {
   // Controller error is difference between input and current state
   float error = controller.input - pitch;
 
-  Serial.print("error: ");
-  Serial.print(error);
-  Serial.print("\n");
+//  Serial.print("error: ");
+//  Serial.print(error);
+//  Serial.print("\n");
   
 
   // Calculate the proportional term
   pTerm = controller.Kp * error;
 
-  Serial.print("pTerm: ");
-  Serial.print(pTerm);
-  Serial.print("\n");
+//  Serial.print("pTerm: ");
+//  Serial.print(pTerm);
+//  Serial.print("\n");
 
-  Serial.print("dt: ");
-  Serial.print(controller.dt);
-  Serial.print("\n");
+//  Serial.print("dt: ");
+//  Serial.print(controller.dt);
+//  Serial.print("\n");
 
   // Calculate the integral state with appropriate min/max constraints
   controller.iState += error * controller.dt;
   controller.iState = constrain(controller.iState, MIN_I_TERM/controller.Ki, MAX_I_TERM/controller.Ki);
-
-  Serial.print("iState: ");
-  Serial.print(controller.iState);
-  Serial.print("\n");
+//
+//  Serial.print("iState: ");
+//  Serial.print(controller.iState);
+//  Serial.print("\n");
   
 
   // Calculate the integral term
   iTerm  = controller.Ki * controller.iState;
 
-  Serial.print("iTerm: ");
-  Serial.print(iTerm);
-  Serial.print("\n");
+//  Serial.print("iTerm: ");
+//  Serial.print(iTerm);
+//  Serial.print("\n");
 
   // Calculate the derivative term
   dTerm  = controller.Kd * ((error - controller.old_error)/controller.dt);
 
-  Serial.print("dTerm: ");
-  Serial.print(dTerm);
-  Serial.print("\n");
+//  Serial.print("dTerm: ");
+//  Serial.print(dTerm);
+//  Serial.print("\n");
   // Update the dState of the controller
   controller.old_error = error;
 
   // Add PID terms to get new drive signal (0-1000 scale)
   drive = pTerm + iTerm + dTerm;
-  Serial.print("drive: ");
-  Serial.print(drive);
-  Serial.print("\n");
+//  Serial.print("drive: ");
+//  Serial.print(drive);
+//  Serial.print("\n");
   // Send new drive signal to ESC
   setSpeed(&ESC, drive);
 
@@ -390,7 +390,7 @@ void loop() {
   }
 
   // Print pitch and drive info to serial after PID updates
-//  if (updatedPID) {
+  if (updatedPID) {
 //    if (countChanged) {
 //      sprintf(why, "~/idek/icantbelieveyouvedonethis%d.csv", count);
 //      fp = fopen(why, "w");
@@ -422,7 +422,7 @@ void loop() {
     Serial.print(drive);
     Serial.print(",");
     Serial.print("input: ");
-    Serial.println(controller.input)
+    Serial.println(controller.input);
     updatedPID = false;
   }
 }
