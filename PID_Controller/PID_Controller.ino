@@ -48,6 +48,8 @@ int index;                        // Current index of filterBuffer
 
 int count;
 bool countChanged = false;
+bool oh = false;
+bool poo = false;
 //char* why;
 //FILE *fp = fopen("~/idek/icantbelieveyouvedonethis.csv", "w");
 
@@ -376,9 +378,46 @@ void loop() {
     }
     // Otherwise, treat input as new pitch request
     else {
+      float newAngle;
       // See if user sent new pitch request
-      float newAngle = Serial.parseFloat();
-
+      // See if user wants random inputs
+      if (Serial.peek() == 'r') {
+        newAngle = random(-60, 30);
+        poo = true;
+      } else {
+      
+        newAngle = Serial.parseFloat();
+      }
+      // if angle is less than ten, make it incremental
+      if (!poo && newAngle >= 0 && newAngle <= 10 && newAngle >= MIN_ANGLE) {
+        MsTimer2::stop();
+        controller.old_error = -60 - pitch;
+        controller.input = -60;
+        oh = true;
+        MsTimer2::start();
+      }
+      // while loop for increment
+      if (oh) {
+        delay(1000);
+        while(controller.input < MAX_ANGLE) {
+          MsTimer2::stop();
+          controller.old_error = controller.input - pitch;
+          controller.input += newAngle;
+          MsTimer2::start();
+          if(updatedPID) {
+            Serial.print("pitch: ");
+            Serial.print(pitch, 2);
+            Serial.print(",");
+            Serial.print("drive: ");
+            Serial.print(drive);
+            Serial.print(",");
+            Serial.print("input: ");
+            Serial.println(controller.input);
+            updatedPID = false;
+          }
+        }
+        oh = false;
+      }
       // If new angle is within acceptable range, update input angle
       if (newAngle >= MIN_ANGLE && newAngle <= MAX_ANGLE) {
         MsTimer2::stop();   // Disable interrupts
