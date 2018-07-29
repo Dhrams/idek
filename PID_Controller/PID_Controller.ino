@@ -259,16 +259,10 @@ void setup() {
   while (Serial.available() && Serial.read()); // empty buffer
   while (!Serial.available());                 // wait for data
   
-  if (Serial.read() == 'c') {
-    // Only calibrate ESC if user opted for it
-    calibrate(&ESC);
-  } else {
-    // Otherwise, only arm ESC
-    arm(&ESC);
-  }
+  calibrate(&ESC);
+  arm(&ESC);
 
   // Wait for ready
-  Serial.println("\nSend any character to begin...");
   while (Serial.available() && Serial.read()); // empty buffer
   while (!Serial.available());                 // wait for data
   while (Serial.available() && Serial.read()); // empty buffer again
@@ -290,21 +284,6 @@ void loop() {
   if (Serial.available()) {
     // 'p' for pause
     if (Serial.peek() == 'p') {
-      MsTimer2::stop();   // Disable interrupts
-      Serial.read();      // Flush buffer
-      setSpeed(&ESC, 0);  // Kill power to the motor(s)
-      
-      // wait for ready
-      Serial.println("Send any character to resume...");
-      while (Serial.available() && Serial.read()); // empty buffer
-      while (!Serial.available());                 // wait for data
-      while (Serial.available() && Serial.read()); // empty buffer again
-
-      // Reset system parameters before resuming to avoid unpredictable behavior 
-      resetSystem();
-
-      // Re-enable interrupts and continue
-      MsTimer2::start();
     }
     // 't' for tune
     else if (Serial.peek() == 't') {
