@@ -254,11 +254,11 @@ void setup() {
   controller.Ki         = I_GAIN;
   controller.Kd         = D_GAIN;
   controller.dt         = 1.0 / FREQUENCY; // period = 1/frequency
-    
+
   Serial.println("Send any character to arm ESC or 'c' to calibrate...");
   while (Serial.available() && Serial.read()); // empty buffer
   while (!Serial.available());                 // wait for data
-  
+
   calibrate(&ESC);
   arm(&ESC);
 
