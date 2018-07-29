@@ -1,6 +1,5 @@
 #include "Servo.h"
 #include "MsTimer2.h"
-#include "stdio.h"
 
 /* Default Tuning Variables */
 #define P_GAIN          (3)     // Proportional gain
@@ -102,63 +101,34 @@ void resetSystem() {
  * Update PID output signal using current system state
  */
 void updatePID() {
-  // P, I, & D terms
+    // P, I, & D terms
   float pTerm, iTerm, dTerm;
 
   // Measure and filter rotary sensor value
   pitch = filter((-0.3656 * analogRead(SENSOR_PIN)) + 185.64);
-
- 
   
   // Controller error is difference between input and current state
   float error = controller.input - pitch;
 
-//  Serial.print("error: ");
-//  Serial.print(error);
-//  Serial.print("\n");
-  
-
   // Calculate the proportional term
   pTerm = controller.Kp * error;
-
-//  Serial.print("pTerm: ");
-//  Serial.print(pTerm);
-//  Serial.print("\n");
-
-//  Serial.print("dt: ");
-//  Serial.print(controller.dt);
-//  Serial.print("\n");
 
   // Calculate the integral state with appropriate min/max constraints
   controller.iState += error * controller.dt;
   controller.iState = constrain(controller.iState, MIN_I_TERM/controller.Ki, MAX_I_TERM/controller.Ki);
-//
-//  Serial.print("iState: ");
-//  Serial.print(controller.iState);
-//  Serial.print("\n");
-  
 
   // Calculate the integral term
   iTerm  = controller.Ki * controller.iState;
 
-//  Serial.print("iTerm: ");
-//  Serial.print(iTerm);
-//  Serial.print("\n");
-
   // Calculate the derivative term
   dTerm  = controller.Kd * ((error - controller.old_error)/controller.dt);
 
-//  Serial.print("dTerm: ");
-//  Serial.print(dTerm);
-//  Serial.print("\n");
   // Update the dState of the controller
   controller.old_error = error;
 
   // Add PID terms to get new drive signal (0-1000 scale)
   drive = pTerm + iTerm + dTerm;
-//  Serial.print("drive: ");
-//  Serial.print(drive);
-//  Serial.print("\n");
+
   // Send new drive signal to ESC
   setSpeed(&ESC, drive);
 
@@ -235,44 +205,56 @@ void tuneController(volatile PID *pid) {
   while (Serial.available() && Serial.read());  // empty buffer again
 }
 
-void increment(float angle) {
+void bbincrement(float angle) {
   int reps = (int)(90 / angle);
   MsTimer2::stop();
   controller.old_error = -60 - pitch;
   controller.input = -60;
   MsTimer2::start();
-  delay(500);
+  resetSystem();
+  Serial.print("Hi");
   for (int i = 0; i < reps; i++) {
     if (controller.input < MAX_ANGLE) {
        MsTimer2::stop();
        controller.old_error = controller.input - pitch;
        controller.input += angle;
+       updatePID();
        MsTimer2::start();
+       delay(10000);
        if(updatedPID) {
+          Serial.print("Hi2");
           Serial.print("pitch: ");
           Serial.print(pitch, 2);
+          Serial.print(",");
+          Serial.print("error: ");
+          Serial.print(controller.old_error, 2);
           Serial.print(",");
           Serial.print("drive: ");
           Serial.print(drive);
           Serial.print(",");
           Serial.print("input: ");
           Serial.println(controller.input);
+        
           updatedPID = false;
        }
     }
+    
    
   }
+
 }
 
 void randomAngle(int reps) {
-  float angle = random(-60, 30);
+  Serial.print("Hi3");
   for (int i = 0; i < reps; i++) {
+       float angle = random(-60, 30);
        // might need some constraints on how far the angle can change...
        MsTimer2::stop();
        controller.old_error = angle - pitch;
        controller.input = angle;
        MsTimer2::start();
        if(updatedPID) {
+          Serial.print("Hi4");
           Serial.print("pitch: ");
           Serial.print(pitch, 2);
           Serial.print(",");
@@ -284,6 +266,7 @@ void randomAngle(int reps) {
           updatedPID = false;
        }
   }
+  
 }
 
 // ================================================================
@@ -307,15 +290,21 @@ void setup() {
   controller.Ki         = I_GAIN;
   controller.Kd         = D_GAIN;
   controller.dt         = 1.0 / FREQUENCY; // period = 1/frequency
-
+    
   Serial.println("Send any character to arm ESC or 'c' to calibrate...");
   while (Serial.available() && Serial.read()); // empty buffer
   while (!Serial.available());                 // wait for data
-
-  calibrate(&ESC);
-  arm(&ESC);
+  
+  if (Serial.read() == 'c') {
+    // Only calibrate ESC if user opted for it
+    calibrate(&ESC);
+  } else {
+    // Otherwise, only arm ESC
+    arm(&ESC);
+  }
 
   // Wait for ready
+  Serial.println("\nSend any character to begin...");
   while (Serial.available() && Serial.read()); // empty buffer
   while (!Serial.available());                 // wait for data
   while (Serial.available() && Serial.read()); // empty buffer again
@@ -328,6 +317,8 @@ void setup() {
   MsTimer2::start();
 }
 
+
+
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
@@ -335,8 +326,6 @@ void setup() {
 void loop() {
   // Check for user input
   if (Serial.available()) {
-//<<<<<<< HEAD
-//=======
     // 'p' for pause
     if (Serial.peek() == 'p') {
       MsTimer2::stop();   // Disable interrupts
@@ -355,21 +344,7 @@ void loop() {
       // Re-enable interrupts and continue
       MsTimer2::start();
     }
-//    // 't' for tune
-//    else if (Serial.peek() == 't') {
-//      MsTimer2::stop();   // Disable interrupts
-//      Serial.read();      // Flush buffer
-//      setSpeed(&ESC, 0);  // Kill power to the motor(s)
-//
-//      // Call tuning subroutine
-//      tuneController(&controller);
-//
-//      // Reset system parameters before resuming to avoid unpredictable behavior 
-//      resetSystem();
-//
-//      // Re-enable interrupts and continue
-//      MsTimer2::start();
-//    }
+
     // 'c' for calibrate
     else if (Serial.peek() == 'c') {
       MsTimer2::stop();   // Disable interrupts
@@ -391,101 +366,37 @@ void loop() {
       // Re-enable interrupts and continue
       MsTimer2::start();
     }
-//    // 'f' for frequency
-//    else if (Serial.peek() == 'f') {
-//      MsTimer2::stop();   // Disable interrupts
-//      Serial.read();      // Flush buffer
-//      setSpeed(&ESC, 0);  // Kill power to the motor(s)
-//
-//      // Ask user to set new refresh rate
-//      Serial.print("Set new refresh rate in Hz (1-");
-//      Serial.print(MAX_FREQ);
-//      Serial.println(")");
-//      while (Serial.available() && Serial.read());  // empty buffer
-//      while (!Serial.available());                  // wait for data
-//      int newFreq = Serial.parseInt();              // Read user input
-//      
-//      // Check for valid new frequency
-//      if (newFreq > 0 && newFreq <= MAX_FREQ) {
-//        controller.dt = 1.0 / newFreq;            // Set new controller dt
-//        MsTimer2::set(1000 / newFreq, updatePID); // Set new interrupt period (in milliseconds)
-//      }
-//      
-//      // wait for ready
-//      Serial.println("Send any character to resume...");
-//      while (Serial.available() && Serial.read()); // empty buffer
-//      while (!Serial.available());                 // wait for data
-//      while (Serial.available() && Serial.read()); // empty buffer again
-//
-//      // Reset system parameters before resuming to avoid unpredictable behavior 
-//      resetSystem();
-//
-//      // Re-enable interrupts and continue
-//      MsTimer2::start();
-    } else if (Serial.peek() == 'i') {
-        float iangle;
-        Serial.println("Please give an increment angle: ");
-        while (Serial.available() && Serial.read());  // empty buffer
-        while (!Serial.available());    // wait for response
-        iangle = Serial.parseFloat();
-        increment(iangle);
-      } else if (Serial.peek() == 'r') {
-        int reps;
-        Serial.println("Please give how many repititions you would like: ");
-        while (Serial.available() && Serial.read());  // empty buffer
-        while (!Serial.available());    // wait for response
-        reps = (int)(Serial.parseFloat());
-        randomAngle(reps);
-      }
+
+    else if (Serial.peek() == 'i') {
+      float iangle;
+      Serial.println("Please give an increment angle: ");
+      while (Serial.available() && Serial.read());  // empty buffer
+      while (!Serial.available());    // wait for response
+      iangle = Serial.parseFloat();
+      bbincrement(iangle);
+      resetSystem();
+    } 
+    
+    else if (Serial.peek() == 'r') {
+       int reps;
+       Serial.println("Please give how many repititions you would like: ");
+       while (Serial.available() && Serial.read());  // empty buffer
+       while (!Serial.available());    // wait for response
+       reps = (int)(Serial.parseFloat());
+       randomAngle(reps);
+       resetSystem();
+    } 
+    
     // Otherwise, treat input as new pitch request
     else {
       float newAngle = Serial.parseFloat();
-      
-      // See if user sent new pitch request
-      // See if user wants random inputs
-//      if (Serial.peek() == 'r') {
-//        newAngle = random(-60, 30);
-//        poo = true;
-//      } else {
-//      
-//        newAngle = Serial.parseFloat();
-//      }
-//      // if angle is less than ten, make it incremental
-//      if (!poo && newAngle >= 0 && newAngle <= 10 && newAngle >= MIN_ANGLE) {
-//        MsTimer2::stop();
-//        controller.old_error = -60 - pitch;
-//        controller.input = -60;
-//        oh = true;
-//        MsTimer2::start();
-//      }
-//      // while loop for increment
-//      if (oh) {
-//        delay(1000);
-//        while(controller.input < MAX_ANGLE) {
-//          MsTimer2::stop();
-//          controller.old_error = controller.input - pitch;
-//          controller.input += newAngle;
-//          MsTimer2::start();
-//          if(updatedPID) {
-//            Serial.print("pitch: ");
-//            Serial.print(pitch, 2);
-//            Serial.print(",");
-//            Serial.print("drive: ");
-//            Serial.print(drive);
-//            Serial.print(",");
-//            Serial.print("input: ");
-//            Serial.println(controller.input);
-//            updatedPID = false;
-//          }
-//        }
-//        oh = false;
-//      }
       // If new angle is within acceptable range, update input angle
       if (newAngle >= MIN_ANGLE && newAngle <= MAX_ANGLE) {
         MsTimer2::stop();   // Disable interrupts
         controller.old_error = newAngle - pitch;
         controller.input = newAngle;
         MsTimer2::start();  // Re-enable interrupts and continue
+      }
     }
   }
 
