@@ -282,79 +282,6 @@ void setup() {
 void loop() {
   // Check for user input
   if (Serial.available()) {
-    // 'p' for pause
-    if (Serial.peek() == 'p') {
-    }
-    // 't' for tune
-    else if (Serial.peek() == 't') {
-      MsTimer2::stop();   // Disable interrupts
-      Serial.read();      // Flush buffer
-      setSpeed(&ESC, 0);  // Kill power to the motor(s)
-
-      // Call tuning subroutine
-      tuneController(&controller);
-
-      // Reset system parameters before resuming to avoid unpredictable behavior 
-      resetSystem();
-
-      // Re-enable interrupts and continue
-      MsTimer2::start();
-    }
-    // 'c' for calibrate
-    else if (Serial.peek() == 'c') {
-      MsTimer2::stop();   // Disable interrupts
-      Serial.read();      // Flush buffer
-      setSpeed(&ESC, 0);  // Kill power to the motor(s)
-
-      // Call calibration subroutine
-      calibrate(&ESC);
-
-      // wait for ready
-      Serial.println("Send any character to resume...");
-      while (Serial.available() && Serial.read()); // empty buffer
-      while (!Serial.available());                 // wait for data
-      while (Serial.available() && Serial.read()); // empty buffer again
-
-      // Reset system parameters before resuming to avoid unpredictable behavior 
-      resetSystem();
-
-      // Re-enable interrupts and continue
-      MsTimer2::start();
-    }
-    // 'f' for frequency
-    else if (Serial.peek() == 'f') {
-      MsTimer2::stop();   // Disable interrupts
-      Serial.read();      // Flush buffer
-      setSpeed(&ESC, 0);  // Kill power to the motor(s)
-
-      // Ask user to set new refresh rate
-      Serial.print("Set new refresh rate in Hz (1-");
-      Serial.print(MAX_FREQ);
-      Serial.println(")");
-      while (Serial.available() && Serial.read());  // empty buffer
-      while (!Serial.available());                  // wait for data
-      int newFreq = Serial.parseInt();              // Read user input
-      
-      // Check for valid new frequency
-      if (newFreq > 0 && newFreq <= MAX_FREQ) {
-        controller.dt = 1.0 / newFreq;            // Set new controller dt
-        MsTimer2::set(1000 / newFreq, updatePID); // Set new interrupt period (in milliseconds)
-      }
-      
-      // wait for ready
-      Serial.println("Send any character to resume...");
-      while (Serial.available() && Serial.read()); // empty buffer
-      while (!Serial.available());                 // wait for data
-      while (Serial.available() && Serial.read()); // empty buffer again
-
-      // Reset system parameters before resuming to avoid unpredictable behavior 
-      resetSystem();
-
-      // Re-enable interrupts and continue
-      MsTimer2::start();
-    }
-    // Otherwise, treat input as new pitch request
-    else {
       // See if user sent new pitch request
       float newAngle = Serial.parseFloat();
 
@@ -364,26 +291,11 @@ void loop() {
         controller.old_error = newAngle - pitch;
         controller.input = newAngle;
         MsTimer2::start();  // Re-enable interrupts and continue
-      }
     }
   }
 
   // Print pitch and drive info to serial after PID updates
   if (updatedPID) {
-//    if (countChanged) {
-//      sprintf(why, "~/idek/icantbelieveyouvedonethis%d.csv", count);
-//      fp = fopen(why, "w");
-//      countChanged = false;
-//    }
-//     
-//    fprintf(fp, "pitch: %d", pitch);
-//    fprintf(fp, "error: %d", controller.old_error);
-//    fprintf(fp, "input_: %d", controller.input);
-//    fprintf(fp, "drive: %d", drive);
-//    if (controller.old_error >= 9) {
-//      count++;
-//      countChanged = true;
-//    }
     if (countChanged) {
       Serial.print("end");
       Serial.print("\n");
