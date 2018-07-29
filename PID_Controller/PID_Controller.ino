@@ -48,6 +48,8 @@ int index;                        // Current index of filterBuffer
 
 int count;
 bool countChanged = false;
+bool oh = false;
+bool poo = false;
 //char* why;
 //FILE *fp = fopen("~/idek/icantbelieveyouvedonethis.csv", "w");
 
@@ -282,9 +284,137 @@ void setup() {
 void loop() {
   // Check for user input
   if (Serial.available()) {
-      // See if user sent new pitch request
-      float newAngle = Serial.parseFloat();
+<<<<<<< HEAD
+=======
+    // 'p' for pause
+    if (Serial.peek() == 'p') {
+      MsTimer2::stop();   // Disable interrupts
+      Serial.read();      // Flush buffer
+      setSpeed(&ESC, 0);  // Kill power to the motor(s)
+      
+      // wait for ready
+      Serial.println("Send any character to resume...");
+      while (Serial.available() && Serial.read()); // empty buffer
+      while (!Serial.available());                 // wait for data
+      while (Serial.available() && Serial.read()); // empty buffer again
 
+      // Reset system parameters before resuming to avoid unpredictable behavior 
+      resetSystem();
+
+      // Re-enable interrupts and continue
+      MsTimer2::start();
+    }
+    // 't' for tune
+    else if (Serial.peek() == 't') {
+      MsTimer2::stop();   // Disable interrupts
+      Serial.read();      // Flush buffer
+      setSpeed(&ESC, 0);  // Kill power to the motor(s)
+
+      // Call tuning subroutine
+      tuneController(&controller);
+
+      // Reset system parameters before resuming to avoid unpredictable behavior 
+      resetSystem();
+
+      // Re-enable interrupts and continue
+      MsTimer2::start();
+    }
+    // 'c' for calibrate
+    else if (Serial.peek() == 'c') {
+      MsTimer2::stop();   // Disable interrupts
+      Serial.read();      // Flush buffer
+      setSpeed(&ESC, 0);  // Kill power to the motor(s)
+
+      // Call calibration subroutine
+      calibrate(&ESC);
+
+      // wait for ready
+      Serial.println("Send any character to resume...");
+      while (Serial.available() && Serial.read()); // empty buffer
+      while (!Serial.available());                 // wait for data
+      while (Serial.available() && Serial.read()); // empty buffer again
+
+      // Reset system parameters before resuming to avoid unpredictable behavior 
+      resetSystem();
+
+      // Re-enable interrupts and continue
+      MsTimer2::start();
+    }
+    // 'f' for frequency
+    else if (Serial.peek() == 'f') {
+      MsTimer2::stop();   // Disable interrupts
+      Serial.read();      // Flush buffer
+      setSpeed(&ESC, 0);  // Kill power to the motor(s)
+
+      // Ask user to set new refresh rate
+      Serial.print("Set new refresh rate in Hz (1-");
+      Serial.print(MAX_FREQ);
+      Serial.println(")");
+      while (Serial.available() && Serial.read());  // empty buffer
+      while (!Serial.available());                  // wait for data
+      int newFreq = Serial.parseInt();              // Read user input
+      
+      // Check for valid new frequency
+      if (newFreq > 0 && newFreq <= MAX_FREQ) {
+        controller.dt = 1.0 / newFreq;            // Set new controller dt
+        MsTimer2::set(1000 / newFreq, updatePID); // Set new interrupt period (in milliseconds)
+      }
+      
+      // wait for ready
+      Serial.println("Send any character to resume...");
+      while (Serial.available() && Serial.read()); // empty buffer
+      while (!Serial.available());                 // wait for data
+      while (Serial.available() && Serial.read()); // empty buffer again
+
+      // Reset system parameters before resuming to avoid unpredictable behavior 
+      resetSystem();
+
+      // Re-enable interrupts and continue
+      MsTimer2::start();
+    }
+    // Otherwise, treat input as new pitch request
+    else {
+      float newAngle;
+>>>>>>> 1a50e8e9a9b3b703bdac79e6145cc5e5de341f2b
+      // See if user sent new pitch request
+      // See if user wants random inputs
+      if (Serial.peek() == 'r') {
+        newAngle = random(-60, 30);
+        poo = true;
+      } else {
+      
+        newAngle = Serial.parseFloat();
+      }
+      // if angle is less than ten, make it incremental
+      if (!poo && newAngle >= 0 && newAngle <= 10 && newAngle >= MIN_ANGLE) {
+        MsTimer2::stop();
+        controller.old_error = -60 - pitch;
+        controller.input = -60;
+        oh = true;
+        MsTimer2::start();
+      }
+      // while loop for increment
+      if (oh) {
+        delay(1000);
+        while(controller.input < MAX_ANGLE) {
+          MsTimer2::stop();
+          controller.old_error = controller.input - pitch;
+          controller.input += newAngle;
+          MsTimer2::start();
+          if(updatedPID) {
+            Serial.print("pitch: ");
+            Serial.print(pitch, 2);
+            Serial.print(",");
+            Serial.print("drive: ");
+            Serial.print(drive);
+            Serial.print(",");
+            Serial.print("input: ");
+            Serial.println(controller.input);
+            updatedPID = false;
+          }
+        }
+        oh = false;
+      }
       // If new angle is within acceptable range, update input angle
       if (newAngle >= MIN_ANGLE && newAngle <= MAX_ANGLE) {
         MsTimer2::stop();   // Disable interrupts
