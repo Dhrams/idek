@@ -26,7 +26,7 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[23]:
+: # Out[11]:
 
 # Plotting the first image in the training data so that we have an idea of what we're looking at.
 #+BEGIN_SRC ipython :session :results raw drawer :exports none
@@ -38,41 +38,20 @@ from matplotlib import pyplot as plt
 
 #+RESULTS:
 :RESULTS:
-# Out[24]:
+# Out[12]:
 :END:
 
 
-#+BEGIN_SRC markdown :session 
 
 
-Inputs
-=======
-
-error
-input_
--- iState  # What is this????
-
-Labels
-=======
-drive
-#+END_SRC
-
-
-
-
-
-
-
-
-
-
+Create and initialize the Neural Net
 #+BEGIN_SRC ipython :noweb yes :session :exports none
 # Class Definition of Neural Net
 <<NeuralNet>>
 #+END_SRC
 
 #+RESULTS:
-: # Out[25]:
+: # Out[17]:
 
 #+BEGIN_SRC ipython :session
 net = NeuralNet(input_node_size = 784,
@@ -81,7 +60,75 @@ net = NeuralNet(input_node_size = 784,
 #+END_SRC
 
 #+RESULTS:
-: # Out[26]:
+: # Out[18]:
+
+
+
+
+
+Short script to look at the kind of data we have.
+#+BEGIN_SRC sh :exports all
+ls Data/
+#+END_SRC
+
+#+RESULTS:
+| 0to10.csv    |
+| -10to0.csv   |
+| 10to20.csv   |
+| -20to-10.csv |
+| 20to30.csv   |
+| -30to-20.csv |
+| -40to-30.csv |
+| -50to-40.csv |
+| -60to-50.csv |
+
+
+# We must figure out a way to convert this output into a python list. The only downside is that we'll have to ensure that the folder only contains relevant csv files. The upsides are that we'll have excellent documentation for this.
+
+#+BEGIN_SRC ipython :session
+import csv
+import pandas as pd
+list_of_data_sources = ['Data/-60to-50.csv',
+'Data/-50to-40.csv',
+'Data/-40to-30.csv',
+'Data/-30to-20.csv',
+'Data/-20to-10.csv',
+'Data/-10to0.csv',
+'Data/0to10.csv',
+'Data/10to20.csv',
+'Data/20to30.csv'
+]
+
+
+
+for i in list_of_data_sources:
+    with open(i, 'r') as csvfile:
+
+        data = {'pitch':[],
+                'drive':[],
+                'input':[]}
+
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in spamreader:
+            if len(row) is not 3:
+                continue
+            
+            data['pitch'].append(row[0].split(' ')[1])
+            data['drive'].append(row[1].split(' ')[1])
+            data['input'].append(row[2].split(' ')[1])
+        #print(data)    
+        pandas_frame = pd.DataFrame.from_dict(data)
+        X_data = pandas_frame[['pitch','input']].values
+        Y_data = pandas_frame['drive'].values
+        
+        net.train(X_data,Y_data,epochs=6)
+#+END_SRC
+
+#+RESULTS:
+: # Out[8]:
+
+
+
 
 
 #+BEGIN_SRC ipython :noweb yes :session :exports none
@@ -145,13 +192,6 @@ while True:
 #+RESULTS:
 : # Out[22]:
 
-
-#+BEGIN_SRC ipython :session
-# net.train(X_train, Y_train, epochs=6)
-#+End_SRC
-
-#+RESULTS:
-: # Out[36]:
 
 
 
@@ -264,7 +304,7 @@ Nothing
 #+NAME: NeuralNet_train
 #+BEGIN_SRC python
     def train(self, train_x, train_y, epochs):
-        self.model.fit(train_x, train_y, epochs, batch_size = 32)
+        self.model.fit(train_x, train_y, epochs)
 #+END_SRC
 
 ** run

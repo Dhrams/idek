@@ -52,11 +52,11 @@ class PID(object):
         #     calibrate(Esc_pin)
         # else:
         #     arm(Esc_pin)
-
+    
     """
     Resets the PID controller to initialized state
     """
-
+    
     def resetSystem(self):
         self.drive = 0
         self.updatedPid = False
@@ -64,74 +64,59 @@ class PID(object):
             self.angle_com = 0
         self.controller.iState = 0
         self.controller.oldError = self.controller.input_ - self.angle_com
-
+    
     """
     updates PID values as soon as anew pitch request is made
-
+    
     inputs:
     com - pitch request
-
+    
     returns:
     updatedPid - boolean for if the PID has been updated or not
     """
     def updatePID(self, com):
-
+    
         """
         maps the given float to an integer value between out_min and out_max
-
+        
         input:
         x - value to map
         in_min - min value that val is within, usually 0
         in_max - max value that val can be
         out_min - min value that val is to be mapped to
         out_max - max value that val is to be mapped to
-
+        
         returns:
         mapped integer
-
+        
         """
         def trymap(x, in_min, in_max, out_min, out_max):
             return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
-
+        
         """
         constrains the value given to the range given
-
+        
         input:
         val - the value to be constrained
         min_val - min value that val can be
         max_val - max valuse that val can be
-
+        
         returns:
         value within the range given
-
+        
         """
         def constrain(val, min_val, max_val):
             return min(max_val, max(min_val, val))
-
+    
         pTerm, iTerm, dTerm, error = 0,0,0,0
         self.angle_com = com
         error = self.controller.input_ - self.angle_com
-
-        print("Error: %f\n" % (error))
-
         pTerm = self.controller.Kp * error
-
-        print("pTerm: %f\n" % (pTerm))
-
         self.controller.iState += error * self.controller.dt
-
-        print("iState: %f\n" % (self.controller.iState))
-
         self.controller.iState = constrain(self.controller.iState, self.min_i_term/self.controller.Ki, self.max_i_term/self.controller.Ki)
-        print("Constrained iState: %f\n" % (self.controller.iState))
         iTerm = self.controller.Ki * self.controller.iState
-        print("iTerm: %f\n" % (iTerm))
         dTerm = self.controller.Kd * ((error - self.controller.oldError) / self.controller.dt)
-        print("dTerm: %f\n" % (dTerm))
-        self.controller.oldError = error
-
         self.drive = pTerm + iTerm + dTerm
-        print("drive: %f\n" % (self.drive))
         # setSpeed(Esc_pin, self.drive)
         self.updatedPid = True
         return self.drive

@@ -16,14 +16,6 @@ class NeuralNet(object):
                                          )
                                    )
                     self.model.add(Activation('relu'))
-                    from keras.layers import Dense
-                    # First layer requires input dimension ie input_node_size
-                    # self.model.add(
-                    #                Dense(units=64,
-                    #                      activation='relu',
-                    #                      input_dim=input_node_size
-                    #                      )
-                    #               )
                     # Add layers to model for all hidden layers
                     for node_size in hidden_layers_node_size:
                         self.model.add(
