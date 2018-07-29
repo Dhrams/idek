@@ -93,7 +93,7 @@ list_of_data_sources = ['Data/-60to-50.csv',
 'Data/-40to-30.csv',
 'Data/-30to-20.csv',
 'Data/-20to-10.csv',
-'Data/-10to0.csv',
+'Data/-10to0.csv'favorites,
 'Data/0to10.csv',
 'Data/10to20.csv',
 'Data/20to30.csv'

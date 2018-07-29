@@ -284,105 +284,12 @@ void setup() {
 void loop() {
   // Check for user input
   if (Serial.available()) {
-<<<<<<< HEAD
-=======
-    // 'p' for pause
-    if (Serial.peek() == 'p') {
-      MsTimer2::stop();   // Disable interrupts
-      Serial.read();      // Flush buffer
-      setSpeed(&ESC, 0);  // Kill power to the motor(s)
-      
-      // wait for ready
-      Serial.println("Send any character to resume...");
-      while (Serial.available() && Serial.read()); // empty buffer
-      while (!Serial.available());                 // wait for data
-      while (Serial.available() && Serial.read()); // empty buffer again
-
-      // Reset system parameters before resuming to avoid unpredictable behavior 
-      resetSystem();
-
-      // Re-enable interrupts and continue
-      MsTimer2::start();
-    }
-    // 't' for tune
-    else if (Serial.peek() == 't') {
-      MsTimer2::stop();   // Disable interrupts
-      Serial.read();      // Flush buffer
-      setSpeed(&ESC, 0);  // Kill power to the motor(s)
-
-      // Call tuning subroutine
-      tuneController(&controller);
-
-      // Reset system parameters before resuming to avoid unpredictable behavior 
-      resetSystem();
-
-      // Re-enable interrupts and continue
-      MsTimer2::start();
-    }
-    // 'c' for calibrate
-    else if (Serial.peek() == 'c') {
-      MsTimer2::stop();   // Disable interrupts
-      Serial.read();      // Flush buffer
-      setSpeed(&ESC, 0);  // Kill power to the motor(s)
-
-      // Call calibration subroutine
-      calibrate(&ESC);
-
-      // wait for ready
-      Serial.println("Send any character to resume...");
-      while (Serial.available() && Serial.read()); // empty buffer
-      while (!Serial.available());                 // wait for data
-      while (Serial.available() && Serial.read()); // empty buffer again
-
-      // Reset system parameters before resuming to avoid unpredictable behavior 
-      resetSystem();
-
-      // Re-enable interrupts and continue
-      MsTimer2::start();
-    }
-    // 'f' for frequency
-    else if (Serial.peek() == 'f') {
-      MsTimer2::stop();   // Disable interrupts
-      Serial.read();      // Flush buffer
-      setSpeed(&ESC, 0);  // Kill power to the motor(s)
-
-      // Ask user to set new refresh rate
-      Serial.print("Set new refresh rate in Hz (1-");
-      Serial.print(MAX_FREQ);
-      Serial.println(")");
-      while (Serial.available() && Serial.read());  // empty buffer
-      while (!Serial.available());                  // wait for data
-      int newFreq = Serial.parseInt();              // Read user input
-      
-      // Check for valid new frequency
-      if (newFreq > 0 && newFreq <= MAX_FREQ) {
-        controller.dt = 1.0 / newFreq;            // Set new controller dt
-        MsTimer2::set(1000 / newFreq, updatePID); // Set new interrupt period (in milliseconds)
-      }
-      
-      // wait for ready
-      Serial.println("Send any character to resume...");
-      while (Serial.available() && Serial.read()); // empty buffer
-      while (!Serial.available());                 // wait for data
-      while (Serial.available() && Serial.read()); // empty buffer again
-
-      // Reset system parameters before resuming to avoid unpredictable behavior 
-      resetSystem();
-
-      // Re-enable interrupts and continue
-      MsTimer2::start();
-    }
-    // Otherwise, treat input as new pitch request
-    else {
-      float newAngle;
->>>>>>> 1a50e8e9a9b3b703bdac79e6145cc5e5de341f2b
       // See if user sent new pitch request
       // See if user wants random inputs
       if (Serial.peek() == 'r') {
         newAngle = random(-60, 30);
         poo = true;
       } else {
-      
         newAngle = Serial.parseFloat();
       }
       // if angle is less than ten, make it incremental
