@@ -374,6 +374,12 @@ void loop() {
       while (!Serial.available());    // wait for response
       iangle = Serial.parseFloat();
       bbincrement(iangle);
+
+      while (Serial.available() && Serial.read()); // empty buffer
+      while (!Serial.available());                 // wait for data
+      while (Serial.available() && Serial.read()); // empty buffer again
+
+
       resetSystem();
     } 
     
@@ -384,6 +390,12 @@ void loop() {
        while (!Serial.available());    // wait for response
        reps = (int)(Serial.parseFloat());
        randomAngle(reps);
+
+       while (Serial.available() && Serial.read()); // empty buffer
+       while (!Serial.available());                 // wait for data
+       while (Serial.available() && Serial.read()); // empty buffer again
+
+
        resetSystem();
     } 
     
