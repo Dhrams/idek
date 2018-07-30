@@ -116,20 +116,24 @@ sudo usermod -a -G dialout <username>
 
 #+BEGIN_SRC ipython :session
 import serial
+#print(serial.__file__)
 import csv
 #+END_SRC
 
 #+RESULTS:
-: # Out[22]:
+: # Out[37]:
 
 
 #+BEGIN_SRC ipython :session
 
 # For Windows
-serialInterface = 'tty1'
-
+serialInterface = '/dev/tty.wchusbserial1420'
+print(dir(serial))
 arduino = serial.Serial( serialInterface , 115200, timeout=.1)
 #+END_SRC
+
+#+RESULTS:
+: # Out[36]:
 
 
 #+BEGIN_SRC ipython :session

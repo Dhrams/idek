@@ -129,6 +129,18 @@ void updatePID() {
   // Add PID terms to get new drive signal (0-1000 scale)
   drive = pTerm + iTerm + dTerm;
 
+  Serial.print("pitch: ");
+  Serial.print(pitch, 2);
+  Serial.print(",");
+  Serial.print("error: ");
+  Serial.print(controller.old_error, 2);
+  Serial.print(",");
+  Serial.print("drive: ");
+  Serial.print(drive);
+  Serial.print(",");
+  Serial.print("input: ");
+  Serial.println(controller.input);
+
   // Send new drive signal to ESC
   setSpeed(&ESC, drive);
 
@@ -211,8 +223,9 @@ void bbincrement(float angle) {
   controller.old_error = -60 - pitch;
   controller.input = -60;
   MsTimer2::start();
-  resetSystem();
-  Serial.print("Hi");
+  delay(10000);
+  //resetSystem();
+  //Serial.print("Hi");
   for (int i = 0; i < reps; i++) {
     if (controller.input < MAX_ANGLE) {
        MsTimer2::stop();
@@ -220,9 +233,9 @@ void bbincrement(float angle) {
        controller.input += angle;
        updatePID();
        MsTimer2::start();
-       delay(10000);
+       delay(50000);
        if(updatedPID) {
-          Serial.print("Hi2");
+          //Serial.print("Hi2");
           Serial.print("pitch: ");
           Serial.print(pitch, 2);
           Serial.print(",");
@@ -246,25 +259,26 @@ void bbincrement(float angle) {
 
 void randomAngle(int reps) {
   Serial.print("Hi3");
+  resetSystem();
   for (int i = 0; i < reps; i++) {
        float angle = random(-60, 30);
        // might need some constraints on how far the angle can change...
        MsTimer2::stop();
        controller.old_error = angle - pitch;
        controller.input = angle;
+       updatePID();
        MsTimer2::start();
-       if(updatedPID) {
-          Serial.print("Hi4");
-          Serial.print("pitch: ");
-          Serial.print(pitch, 2);
-          Serial.print(",");
-          Serial.print("drive: ");
-          Serial.print(drive);
-          Serial.print(",");
-          Serial.print("input: ");
-          Serial.println(controller.input);
-          updatedPID = false;
-       }
+       delay(10000);
+       Serial.print("Hi4");
+       Serial.print("pitch: ");
+       Serial.print(pitch, 2);
+       Serial.print(",");
+       Serial.print("drive: ");
+       Serial.print(drive);
+       Serial.print(",");
+       Serial.print("input: ");
+       Serial.println(controller.input);
+       updatedPID = false;
   }
   
 }
@@ -372,6 +386,7 @@ void loop() {
       Serial.println("Please give an increment angle: ");
       while (Serial.available() && Serial.read());  // empty buffer
       while (!Serial.available());    // wait for response
+      resetSystem();
       iangle = Serial.parseFloat();
       bbincrement(iangle);
 
