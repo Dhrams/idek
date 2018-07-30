@@ -258,8 +258,9 @@ void bbincrement(float angle) {
 }
 
 void randomAngle(int reps) {
-  Serial.print("Hi3");
+  //Serial.print("Hi3");
   resetSystem();
+  delay(10000);
   for (int i = 0; i < reps; i++) {
        float angle = random(-60, 30);
        // might need some constraints on how far the angle can change...
@@ -268,7 +269,7 @@ void randomAngle(int reps) {
        controller.input = angle;
        updatePID();
        MsTimer2::start();
-       delay(10000);
+       delay(50000);
        Serial.print("Hi4");
        Serial.print("pitch: ");
        Serial.print(pitch, 2);
