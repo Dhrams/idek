@@ -16,6 +16,8 @@ class NeuralNet(object):
                                          )
                                    )
                     self.model.add(Activation('relu'))
+
+                    self.model.add(Flatten())
                     # Add layers to model for all hidden layers
                     for node_size in hidden_layers_node_size:
                         self.model.add(

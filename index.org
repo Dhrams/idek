@@ -89,10 +89,12 @@ ls Data/
 | incrementby50.txt |
 | incrementby5.txt  |
 | random10reps.txt  |
-| random5reps.text  |
+| random5reps.txt  |
 
 
-# We must figure out a way to convert this output into a python list. The only downside is that we'll have to ensure that the folder only contains relevant csv files. The upsides are that we'll have excellent documentation for this.
+# We must figure out a way to convert this output into a python list.
+# The only downside is that we'll have to ensure that the folder only
+# contains relevant csv files. The upsides are that we'll have excellent documentation for this.
 
 #+BEGIN_SRC ipython :session
 import csv
@@ -130,15 +132,15 @@ for i in list_of_data_sources:
         for row in spamreader:
             if len(row) is not 3:
                 continue
-            
+
             data['pitch'].append(row[0].split(' ')[1])
             data['drive'].append(row[1].split(' ')[1])
             data['input'].append(row[2].split(' ')[1])
-        #print(data)    
+        #print(data)
         pandas_frame = pd.DataFrame.from_dict(data)
         X_data = pandas_frame[['pitch','input']].values
         Y_data = pandas_frame['drive'].values
-        
+
         net.train(X_data,Y_data,epochs=6)
 #+END_SRC
 
@@ -164,15 +166,15 @@ import random as rand
 import time as t
 """
 
- we need something similar to mstimer2 to be able to make 
- something work i believe. but the weird numbers achieved 
+ we need something similar to mstimer2 to be able to make
+ something work i believe. but the weird numbers achieved
  might also be the result of the randint doing whatever it wants... dunno
 
 """
 def simulation(theta, pitch):
     p_term = 3
     i_term = 1.5
-    d_term = 0.4 
+    d_term = 0.4
     angle_com = 0
     pid = PID(p_term=p_term,
               i_term=i_term,
@@ -357,7 +359,7 @@ steps - number of iterations over the entire dataset before evaluation is comple
 
 returns:
 predictions - a numpy array of predictions
- 
+
 #+NAME: NeuralNet_label
 #+BEGIN_SRC python
     def label(self, X, steps):
@@ -380,7 +382,7 @@ predictions - a numpy array of predictions
 ** PIDStruct
 
 
-#+NAME: PID 
+#+NAME: PID
 #+BEGIN_SRC python :tangle pid.py
  """
  Class that acts as a mutable struct
@@ -541,4 +543,3 @@ predictions - a numpy array of predictions
    def constrain(val, min_val, max_val):
        return min(max_val, max(min_val, val))
    #+END_SRC
-

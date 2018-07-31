@@ -116,12 +116,13 @@ sudo usermod -a -G dialout <username>
 
 #+BEGIN_SRC ipython :session
 import serial
+
 #print(serial.__file__)
 import csv
 #+END_SRC
 
 #+RESULTS:
-: # Out[37]:
+: # Out[40]:
 
 
 #+BEGIN_SRC ipython :session
