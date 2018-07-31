@@ -26,7 +26,7 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[11]:
+: # Out[8]:
 
 # Plotting the first image in the training data so that we have an idea of what we're looking at.
 #+BEGIN_SRC ipython :session :results raw drawer :exports none
@@ -38,7 +38,7 @@ from matplotlib import pyplot as plt
 
 #+RESULTS:
 :RESULTS:
-# Out[12]:
+# Out[9]:
 :END:
 
 
@@ -51,16 +51,16 @@ Create and initialize the Neural Net
 #+END_SRC
 
 #+RESULTS:
-: # Out[17]:
+: # Out[16]:
 
 #+BEGIN_SRC ipython :session
-net = NeuralNet(input_node_size = 784,
+net = NeuralNet(input_shape = (7854,2),
                 output_node_size = 10,
                 hidden_layers_node_size = [512])
 #+END_SRC
 
 #+RESULTS:
-: # Out[18]:
+: # Out[17]:
 
 
 
@@ -72,15 +72,24 @@ ls Data/
 #+END_SRC
 
 #+RESULTS:
-| 0to10.csv    |
-| -10to0.csv   |
-| 10to20.csv   |
-| -20to-10.csv |
-| 20to30.csv   |
-| -30to-20.csv |
-| -40to-30.csv |
-| -50to-40.csv |
-| -60to-50.csv |
+| 0to10.csv         |
+| -10to0.csv        |
+| 10to20.csv        |
+| -20to-10.csv      |
+| 20to30.csv        |
+| -30to-20.csv      |
+| -40to-30.csv      |
+| -50to-40.csv      |
+| -60to-50.csv      |
+| incrementby10.txt |
+| incrementby20.txt |
+| incrementby2.txt  |
+| incrementby30.txt |
+| incrementby40.txt |
+| incrementby50.txt |
+| incrementby5.txt  |
+| random10reps.txt  |
+| random5reps.text  |
 
 
 # We must figure out a way to convert this output into a python list. The only downside is that we'll have to ensure that the folder only contains relevant csv files. The upsides are that we'll have excellent documentation for this.
@@ -93,10 +102,19 @@ list_of_data_sources = ['Data/-60to-50.csv',
 'Data/-40to-30.csv',
 'Data/-30to-20.csv',
 'Data/-20to-10.csv',
-'Data/-10to0.csv'favorites,
+'Data/-10to0.csv',
 'Data/0to10.csv',
 'Data/10to20.csv',
-'Data/20to30.csv'
+'Data/20to30.csv',
+'Data/incrementby10.txt',
+'Data/incrementby20.txt',
+'Data/incrementby2.txt',
+'Data/incrementby30.txt',
+'Data/incrementby40.txt',
+'Data/incrementby50.txt',
+'Data/incrementby5.txt',
+'Data/random10reps.txt',
+'Data/random5reps.text'
 ]
 
 
@@ -236,7 +254,7 @@ The model should know what input shape it should expect. For this reason, we sep
           # First layer requires input dimension ie input_shape
           self.model.add(
                          LSTM(units=64,
-                               input_dim=input_node_size
+                               input_shape=input_shape
                                )
                          )
           self.model.add(Activation('relu'))
