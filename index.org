@@ -26,7 +26,7 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[8]:
+: # Out[3]:
 
 # Plotting the first image in the training data so that we have an idea of what we're looking at.
 #+BEGIN_SRC ipython :session :results raw drawer :exports none
@@ -51,7 +51,7 @@ Create and initialize the Neural Net
 #+END_SRC
 
 #+RESULTS:
-: # Out[16]:
+: # Out[7]:
 
 #+BEGIN_SRC ipython :session
 net = NeuralNet(input_shape = (7854,2),
@@ -60,7 +60,7 @@ net = NeuralNet(input_shape = (7854,2),
 #+END_SRC
 
 #+RESULTS:
-: # Out[17]:
+: # Out[8]:
 
 
 
