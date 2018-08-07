@@ -8,6 +8,10 @@ We also set the keras backend to theano.
 
 #+BEGIN_SRC ipython :session
 import numpy as np
+
+Cc: idek <dhrmssrd68@gmail.com>
+Modified-by: Dharshan Ram <dhrmssrd68@gmail.com>
+
 # For reproducibility
 np.random.seed(123)
 
@@ -237,6 +241,7 @@ while True:
 #+END_SRC
 
 ** init
+
 The Sequential model is a linear stack of layers. We pass in a list of layer instances to it to make a Neural Net.
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
@@ -260,6 +265,13 @@ The model should know what input shape it should expect. For this reason, we sep
                                )
                          )
           self.model.add(Activation('relu'))
+#+END_SRC
+
+#+NAME: NeuralNet_init
+#+BEGIN_SRC python
+
+          self.model.add(Flatten())
+
 #+END_SRC
 
 #+NAME: NeuralNet_init
@@ -303,6 +315,7 @@ Adding a regularizer does not improve the model
                              metrics=['accuracy'])
           #model.fit(x_train, y_train, epochs=5, batch_size=32)
 #+END_SRC
+
 
 
 
