@@ -25,12 +25,11 @@ def set_keras_backend(backend):
         import importlib
         importlib.reload(K)
         assert K.backend() == backend
-
 set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[115]:
+: # Out[128]:
 
 # Plotting the first image in the training data so that we have an idea of what we're looking at.
 #+BEGIN_SRC ipython :session :results raw drawer :exports none
@@ -42,7 +41,7 @@ from matplotlib import pyplot as plt
 
 #+RESULTS:
 :RESULTS:
-# Out[102]:
+# Out[129]:
 :END:
 
 
@@ -55,7 +54,7 @@ Create and initialize the Neural Net
 #+END_SRC
 
 #+RESULTS:
-: # Out[116]:
+: # Out[126]:
 
 #+BEGIN_SRC ipython :session
 net = NeuralNet(input_shape = (7854,2),
@@ -64,7 +63,7 @@ net = NeuralNet(input_shape = (7854,2),
 #+END_SRC
 
 #+RESULTS:
-: # Out[117]:
+: # Out[138]:
 
 
 
@@ -129,7 +128,12 @@ list_of_data_sources = ['Data/-60to-50.csv',
 
 count = 1
 
+'''
+TODO: Need to find a way to use only 70% of data so 30$ can be used as validation
+TODO: figure out what least common denom each len(X_data) has with each other so that we know ho many sequences we need
 
+
+'''
 
 
 
@@ -143,35 +147,34 @@ for i in list_of_data_sources:
 
         spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in spamreader:
-            if len(row) is not 3:
+            if len(row) is not 4:
                 continue
-            #print(row[0].split(' ')[-1])
 
 
             data['pitch'].append(row[0].split(' ')[-1])
 
-            data['drive'].append(row[1].split(' ')[-1])
-            data['input'].append(row[2].split(' ')[-1])
+            data['drive'].append(row[2].split(' ')[-1])
+            data['input'].append(row[3].split(' ')[-1])
             
             #ummmmm = pre.sequence.TimeSeriesGenerator(data, ..., sampling_rate = 0.01, length = len(data['input']), start_index = 0, end_index = 7/10 * len(data))
         #print(data)
         pandas_frame = pd.DataFrame.from_dict(data)
         X_data = pandas_frame[['pitch','input']].values
-        X_data = X_data.reshape(1,X_data.shape[0], X_data.shape[1])
+        #X_data = X_data.reshape(1,X_data.shape[0], X_data.shape[1])
         Y_Data = pandas_frame['drive'].values
-        Y_Data = Y_Data.reshape(1,Y_Data.shape[0])
+        #Y_Data = Y_Data.reshape(1,Y_Data.shape[0])
 
-        print(len(X_data))
-        print(len(Y_Data))
+    print(len(X_data))
+    print(len(Y_Data))
 
    
-        count+=1
+        #count+=1
 
-        net.train(X_data,Y_Data,epochs=6)
+        #net.train(X_data,Y_Data,epochs=6)
 #+END_SRC
 
 #+RESULTS:
-: # Out[88]:
+: # Out[145]:
 
 
 
