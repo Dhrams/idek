@@ -29,7 +29,7 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[2]:
+: # Out[10]:
 
 
 
@@ -42,7 +42,7 @@ Create and initialize the Neural Net
 #+END_SRC
 
 #+RESULTS:
-: # Out[3]:
+: # Out[12]:
 
 #+BEGIN_SRC ipython :session
 net = NeuralNet(
@@ -51,7 +51,7 @@ net = NeuralNet(
 #+END_SRC
 
 #+RESULTS:
-: # Out[4]:
+: # Out[13]:
 
 # Plotting the neural net
 #+BEGIN_SRC ipython :session :results raw drawer :exports none
@@ -70,8 +70,8 @@ display(SVG(model_to_dot(net.model, show_shapes=True).create(prog='dot', format=
 
 #+RESULTS:
 :RESULTS:
-# Out[7]:
-[[file:./obipy-resources/20446lJs.svg]]
+# Out[4]:
+[[file:./obipy-resources/UTmA7v.svg]]
 :END:
 
 
@@ -117,15 +117,7 @@ import numpy as np
 
 from keras import preprocessing as pre
 
-list_of_data_sources = ['Data/-60to-50.csv',
-'Data/-50to-40.csv',
-'Data/-40to-30.csv',
-'Data/-30to-20.csv',
-'Data/-20to-10.csv',
-'Data/-10to0.csv',
-'Data/0to10.csv',
-'Data/10to20.csv',
-'Data/20to30.csv',
+list_of_data_sources = [
 'Data/incrementby10.txt',
 'Data/incrementby20.txt',
 'Data/incrementby2.txt',
@@ -300,7 +292,7 @@ The model should know what input shape it should expect. For this reason, we sep
           # First layer requires input dimension ie input_shape
           self.model.add(
                          ConvLSTM2D(filters = 1, 
-                                    kernel_size = (3, 3),
+                                    kernel_size = (2, 1),
                                     kernel_initializer='random_uniform',
                                     bias_initializer='zeros',
                                     kernel_regularizer = regularizers.l2(.01),
@@ -345,7 +337,7 @@ Adding a regularizer does not improve the model
 #+BEGIN_SRC python
           # Last layer requires activation to be softmax
           self.model.add(
-                         Dense(units=7854,
+                         Dense(units=1,
                                activation='softmax'
                                )
                         )
@@ -355,7 +347,7 @@ Adding a regularizer does not improve the model
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
           # Compile model
-          self.model.compile(loss='categorical_crossentropy',
+          self.model.compile(loss='sparse_categorical_crossentropy',
                              optimizer='adam',
                              metrics=['accuracy'])
           #model.fit(x_train, y_train, epochs=5, batch_size=32)
