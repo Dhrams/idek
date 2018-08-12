@@ -29,7 +29,7 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[128]:
+: # Out[165]:
 
 # Plotting the first image in the training data so that we have an idea of what we're looking at.
 #+BEGIN_SRC ipython :session :results raw drawer :exports none
@@ -54,16 +54,16 @@ Create and initialize the Neural Net
 #+END_SRC
 
 #+RESULTS:
-: # Out[126]:
+: # Out[173]:
 
 #+BEGIN_SRC ipython :session
-net = NeuralNet(input_shape = (7854,2),
+net = NeuralNet(
                 output_node_size = 10,
                 hidden_layers_node_size = [512])
 #+END_SRC
 
 #+RESULTS:
-: # Out[138]:
+: # Out[174]:
 
 
 
@@ -160,21 +160,21 @@ for i in list_of_data_sources:
         #print(data)
         pandas_frame = pd.DataFrame.from_dict(data)
         X_data = pandas_frame[['pitch','input']].values
-        #X_data = X_data.reshape(1,X_data.shape[0], X_data.shape[1])
+        #X_data = X_data.reshape(5, 50, X_data.shape[0], X_data.shape[1], 1)
         Y_Data = pandas_frame['drive'].values
         #Y_Data = Y_Data.reshape(1,Y_Data.shape[0])
 
-    print(len(X_data))
-    print(len(Y_Data))
+#    print(len(X_data))
+#    print(len(Y_Data))
 
    
         #count+=1
 
-        #net.train(X_data,Y_Data,epochs=6)
+        net.train(X_data,Y_Data,epochs=6)
 #+END_SRC
 
 #+RESULTS:
-: # Out[145]:
+: # Out[172]:
 
 
 
@@ -271,6 +271,7 @@ The Sequential model is a linear stack of layers. We pass in a list of layer ins
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
           from keras.models import Sequential
+          from keras import regularizers
           self.model = Sequential()
 #+END_SRC
 
@@ -279,7 +280,7 @@ The Sequential model is a linear stack of layers. We pass in a list of layer ins
 Let's import the core layers from Keras which are almost always used.
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
-          from keras.layers import Dense, Dropout, Activation, Flatten, LSTM
+          from keras.layers import Dense, Dropout, Activation, ConvLSTM2D
 #+END_SRC
 
 The model should know what input shape it should expect. For this reason, we sepcifiy an input size for the first layer.
@@ -287,8 +288,14 @@ The model should know what input shape it should expect. For this reason, we sep
 #+BEGIN_SRC python
           # First layer requires input dimension ie input_shape
           self.model.add(
-                         LSTM(units=64,
-                               input_shape=input_shape
+                         ConvLSTM2D(filters = 1, 
+                                    kernel_size = (3, 3),
+                                    kernel_initializer='random_uniform',
+                                    bias_initializer='zeros',
+                                    kernel_regularizer = regularizers.l2(.01),
+                                    activity_regularizer = regularizers.l1(.01),
+                                    return_sequences = True
+                         
                                )
                          )
           self.model.add(Activation('relu'))
