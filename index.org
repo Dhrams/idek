@@ -29,7 +29,7 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[10]:
+: # Out[96]:
 
 
 
@@ -42,7 +42,7 @@ Create and initialize the Neural Net
 #+END_SRC
 
 #+RESULTS:
-: # Out[12]:
+: # Out[97]:
 
 #+BEGIN_SRC ipython :session
 net = NeuralNet(
@@ -51,7 +51,7 @@ net = NeuralNet(
 #+END_SRC
 
 #+RESULTS:
-: # Out[13]:
+: # Out[98]:
 
 # Plotting the neural net
 #+BEGIN_SRC ipython :session :results raw drawer :exports none
@@ -70,8 +70,8 @@ display(SVG(model_to_dot(net.model, show_shapes=True).create(prog='dot', format=
 
 #+RESULTS:
 :RESULTS:
-# Out[4]:
-[[file:./obipy-resources/UTmA7v.svg]]
+# Out[29]:
+[[file:./obipy-resources/bnzLyh.svg]]
 :END:
 
 
@@ -163,21 +163,22 @@ for i in list_of_data_sources:
         #print(data)
         pandas_frame = pd.DataFrame.from_dict(data)
         X_data = pandas_frame[['pitch','input']].values
-        X_data = X_data.reshape(1, X_data.shape[0], X_data.shape[1], 1, 1)
+        
+        X_data = X_data.reshape(1, X_data.shape[0], 1, X_data.shape[1], 1)
         Y_Data = pandas_frame['drive'].values
-        Y_Data = Y_Data.reshape(1,Y_Data.shape[0])
+        Y_Data = Y_Data.reshape(1,Y_Data.shape[0],1)
 
-#    print(len(X_data))
-#    print(len(Y_Data))
+    print(X_data)
+    print(Y_Data)
 
    
         #count+=1
 
-        net.train(X_data,Y_Data,epochs=6)
+        #net.train(X_data,Y_Data,epochs=6)
 #+END_SRC
 
 #+RESULTS:
-: # Out[172]:
+: # Out[99]:
 
 
 
@@ -283,7 +284,7 @@ The Sequential model is a linear stack of layers. We pass in a list of layer ins
 Let's import the core layers from Keras which are almost always used.
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
-          from keras.layers import Dense, Dropout, Activation, ConvLSTM2D, Flatten
+          from keras.layers import Dense, Dropout, Activation, ConvLSTM2D, Reshape
 #+END_SRC
 
 The model should know what input shape it should expect. For this reason, we sepcifiy an input size for the first layer.
@@ -292,7 +293,9 @@ The model should know what input shape it should expect. For this reason, we sep
           # First layer requires input dimension ie input_shape
           self.model.add(
                          ConvLSTM2D(filters = 1, 
-                                    kernel_size = (2, 1),
+                                    kernel_size = (2, 2),
+                                    padding='same',
+                                    input_shape=(None,1,2,1),
                                     kernel_initializer='random_uniform',
                                     bias_initializer='zeros',
                                     kernel_regularizer = regularizers.l2(.01),
@@ -336,6 +339,7 @@ Adding a regularizer does not improve the model
 #+NAME: NeuralNet_init
 #+BEGIN_SRC python
           # Last layer requires activation to be softmax
+          self.model.add(Reshape((-1,1)))
           self.model.add(
                          Dense(units=1,
                                activation='softmax'
