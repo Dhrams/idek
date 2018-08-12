@@ -29,20 +29,8 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[165]:
+: # Out[2]:
 
-# Plotting the first image in the training data so that we have an idea of what we're looking at.
-#+BEGIN_SRC ipython :session :results raw drawer :exports none
-%matplotlib inline
-# Visualize data
-from matplotlib import pyplot as plt
-# plt.imshow(X_train[0])
-#+END_SRC
-
-#+RESULTS:
-:RESULTS:
-# Out[129]:
-:END:
 
 
 
@@ -54,7 +42,7 @@ Create and initialize the Neural Net
 #+END_SRC
 
 #+RESULTS:
-: # Out[186]:
+: # Out[3]:
 
 #+BEGIN_SRC ipython :session
 net = NeuralNet(
@@ -63,7 +51,30 @@ net = NeuralNet(
 #+END_SRC
 
 #+RESULTS:
-: # Out[187]:
+: # Out[4]:
+
+# Plotting the neural net
+#+BEGIN_SRC ipython :session :results raw drawer :exports none
+%matplotlib inline
+
+# Visualize data
+from matplotlib import pyplot as plt
+# plt.imshow(X_train[0])
+
+from IPython.display import SVG,display
+from keras.utils.vis_utils import model_to_dot
+
+display(SVG(model_to_dot(net.model, show_shapes=True).create(prog='dot', format='svg')))
+
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+# Out[7]:
+[[file:./obipy-resources/20446lJs.svg]]
+:END:
+
+
 
 
 

@@ -1,0 +1,90 @@
+<svg height="55pt" viewBox="0.00 0.00 1658.00 55.00" width="1658pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g class="graph" id="graph0" transform="scale(1 1) rotate(0) translate(4 51)">
+<title>G</title>
+<polygon fill="#ffffff" points="-4,4 -4,-51 1654,-51 1654,4 -4,4" stroke="transparent"/>
+<!-- 140672957518400 -->
+<g class="node" id="node1">
+<title>140672957518400</title>
+<polygon fill="none" points="0,-.5 0,-46.5 321,-46.5 321,-.5 0,-.5" stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="101" y="-19.8">conv_lst_m2d_1: ConvLSTM2D</text>
+<polyline fill="none" points="202,-.5 202,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="230" y="-31.3">input:</text>
+<polyline fill="none" points="202,-23.5 258,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="230" y="-8.3">output:</text>
+<polyline fill="none" points="258,-.5 258,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="289.5" y="-31.3">multiple</text>
+<polyline fill="none" points="258,-23.5 321,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="289.5" y="-8.3">multiple</text>
+</g>
+<!-- 140672957521592 -->
+<g class="node" id="node2">
+<title>140672957521592</title>
+<polygon fill="none" points="339,-.5 339,-46.5 610,-46.5 610,-.5 339,-.5" stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="415" y="-19.8">activation_1: Activation</text>
+<polyline fill="none" points="491,-.5 491,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="519" y="-31.3">input:</text>
+<polyline fill="none" points="491,-23.5 547,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="519" y="-8.3">output:</text>
+<polyline fill="none" points="547,-.5 547,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="578.5" y="-31.3">multiple</text>
+<polyline fill="none" points="547,-23.5 610,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="578.5" y="-8.3">multiple</text>
+</g>
+<!-- 140672957521872 -->
+<g class="node" id="node3">
+<title>140672957521872</title>
+<polygon fill="none" points="628,-.5 628,-46.5 853,-46.5 853,-.5 628,-.5" stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="681" y="-19.8">dense_1: Dense</text>
+<polyline fill="none" points="734,-.5 734,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="762" y="-31.3">input:</text>
+<polyline fill="none" points="734,-23.5 790,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="762" y="-8.3">output:</text>
+<polyline fill="none" points="790,-.5 790,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="821.5" y="-31.3">multiple</text>
+<polyline fill="none" points="790,-23.5 853,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="821.5" y="-8.3">multiple</text>
+</g>
+<!-- 140672957519688 -->
+<g class="node" id="node4">
+<title>140672957519688</title>
+<polygon fill="none" points="871,-.5 871,-46.5 1142,-46.5 1142,-.5 871,-.5" stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="947" y="-19.8">activation_2: Activation</text>
+<polyline fill="none" points="1023,-.5 1023,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1051" y="-31.3">input:</text>
+<polyline fill="none" points="1023,-23.5 1079,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1051" y="-8.3">output:</text>
+<polyline fill="none" points="1079,-.5 1079,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1110.5" y="-31.3">multiple</text>
+<polyline fill="none" points="1079,-23.5 1142,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1110.5" y="-8.3">multiple</text>
+</g>
+<!-- 140672957519520 -->
+<g class="node" id="node5">
+<title>140672957519520</title>
+<polygon fill="none" points="1160,-.5 1160,-46.5 1407,-46.5 1407,-.5 1160,-.5" stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1224" y="-19.8">dropout_1: Dropout</text>
+<polyline fill="none" points="1288,-.5 1288,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1316" y="-31.3">input:</text>
+<polyline fill="none" points="1288,-23.5 1344,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1316" y="-8.3">output:</text>
+<polyline fill="none" points="1344,-.5 1344,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1375.5" y="-31.3">multiple</text>
+<polyline fill="none" points="1344,-23.5 1407,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1375.5" y="-8.3">multiple</text>
+</g>
+<!-- 140672957521816 -->
+<g class="node" id="node6">
+<title>140672957521816</title>
+<polygon fill="none" points="1425,-.5 1425,-46.5 1650,-46.5 1650,-.5 1425,-.5" stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1478" y="-19.8">dense_2: Dense</text>
+<polyline fill="none" points="1531,-.5 1531,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1559" y="-31.3">input:</text>
+<polyline fill="none" points="1531,-23.5 1587,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1559" y="-8.3">output:</text>
+<polyline fill="none" points="1587,-.5 1587,-46.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1618.5" y="-31.3">multiple</text>
+<polyline fill="none" points="1587,-23.5 1650,-23.5 " stroke="#000000"/>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="1618.5" y="-8.3">multiple</text>
+</g>
+</g>
+</svg>
