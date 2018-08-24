@@ -29,7 +29,7 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[75]:
+: # Out[50]:
 
 
 
@@ -42,7 +42,7 @@ Create and initialize the Neural Net
 #+END_SRC
 
 #+RESULTS:
-: # Out[76]:
+: # Out[51]:
 
 #+BEGIN_SRC ipython :session
 net = NeuralNet(
@@ -51,7 +51,7 @@ net = NeuralNet(
 #+END_SRC
 
 #+RESULTS:
-: # Out[77]:
+: # Out[52]:
 
 # Plotting the neural net
 #+BEGIN_SRC ipython :session :results raw drawer :exports none
@@ -123,7 +123,6 @@ ls Data/
   'Data/incrementby2.txt',
   'Data/incrementby30.txt',
   'Data/incrementby40.txt',
-  'Data/incrementby50.txt',
   'Data/incrementby5.txt',
   'Data/random10reps.txt',
   'Data/random5reps.text'
@@ -143,7 +142,7 @@ ls Data/
   for i in list_of_data_sources:
 
       with open(i, 'r') as csvfile:
-      
+
           data = {'pitch':[],
                   'drive':[],
                   'input':[]}
@@ -151,49 +150,57 @@ ls Data/
           spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
           for row in spamreader:
               if len(row) is 5:
-                  row = row[1:-1]
+                  del row[0]
                   assert(len(row)==4)
-              if len(row[3].split(' ')[-1]) > 5:
-                  continue
+
+
               if len(row) is not 4:
                   continue
 
+              if (row[2].split(' ')[-1]=='inp'):
+                  continue
+              if (row[3].split(' ')[-1]=='inp'):
+                  continue
+              if len(row[3].split(' ')[-1]) > 5:
+                  continue
 
               data['pitch'].append(row[0].split(' ')[-1])
-
+              #print("oh no: %s" % row[2].split(' ')[-1])
               data['drive'].append(row[2].split(' ')[-1])
+              #print("oh god: %s" % (row[0].split(' ')[-1]))
               data['input'].append(row[3].split(' ')[-1])
+              #print("oh lord: %s" % (row[3].split(' ')[-1]))
 
-             
-              
+
               #print(len(data['pitch']))
-              
+
               #ummmmm = pre.sequence.TimeSeriesGenerator(data, ..., sampling_rate = 0.01, length = len(data['input']), start_index = 0, end_index = 7/10 * len(data))
           #print(data)
 
-          
+
           pandas_frame = pd.DataFrame.from_dict(data)
           X_data = pandas_frame[['pitch','input']].values
-          
+          #print(X_data.shape)
           timeBoi = [i/100 for i in range(X_data.shape[0])]
           time = np.asarray(timeBoi)
           time = time.reshape(time.shape[0],1)
           #print(timeBoi)
           X_data = X_data.reshape(1, X_data.shape[0], 1, X_data.shape[1], 1)
           Y_Data = pandas_frame['drive'].values
+         # print(Y_Data.shape)
           Y_Data = Y_Data.reshape(1,Y_Data.shape[0],1)
 
-      print(X_data[0])
-      print(Y_Data[0])
+      print(X_data.shape)
+      print(Y_Data.shape)
 
-     
+
           #count+=1
 
           #net.train(X_data,Y_Data,epochs=6)
 #+END_SRC
 
 #+RESULTS:
-: # Out[78]:
+: # Out[54]:
 
 
 
