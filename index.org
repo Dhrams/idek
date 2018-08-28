@@ -29,7 +29,7 @@ set_keras_backend("theano")
 #+END_SRC
 
 #+RESULTS:
-: # Out[50]:
+: # Out[65]:
 
 
 
@@ -42,16 +42,16 @@ Create and initialize the Neural Net
 #+END_SRC
 
 #+RESULTS:
-: # Out[51]:
+: # Out[66]:
 
 #+BEGIN_SRC ipython :session
 net = NeuralNet(
                 output_node_size = 10,
-                hidden_layers_node_size = [512])
+                hidden_layers_node_size = [3,5,8])
 #+END_SRC
 
 #+RESULTS:
-: # Out[52]:
+: # Out[67]:
 
 # Plotting the neural net
 #+BEGIN_SRC ipython :session :results raw drawer :exports none
@@ -188,19 +188,19 @@ ls Data/
           X_data = X_data.reshape(1, X_data.shape[0], 1, X_data.shape[1], 1)
           Y_Data = pandas_frame['drive'].values
          # print(Y_Data.shape)
-          Y_Data = Y_Data.reshape(1,Y_Data.shape[0],1)
+          Y_Data = Y_Data.reshape(1,len(Y_Data),1)
 
-      print(X_data.shape)
-      print(Y_Data.shape)
+      #print(X_data.shape)
+      #print(Y_Data.shape)
 
 
           #count+=1
 
-          #net.train(X_data,Y_Data,epochs=6)
+          net.train(X_data,Y_Data,epochs=6)
 #+END_SRC
 
 #+RESULTS:
-: # Out[54]:
+: # Out[60]:
 
 
 
@@ -314,7 +314,7 @@ The model should know what input shape it should expect. For this reason, we sep
 #+BEGIN_SRC python
           # First layer requires input dimension ie input_shape
           self.model.add(
-                         ConvLSTM2D(filters = 1, 
+                         ConvLSTM2D(filters = 3, 
                                     kernel_size = (2, 2),
                                     padding='same',
                                     input_shape=(None,1,2,1),
