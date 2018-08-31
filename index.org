@@ -363,7 +363,8 @@ Adding a regularizer does not improve the model
           # Last layer requires activation to be softmax
           self.model.add(Reshape((-1,1)))
           self.model.add(
-                         Dense(units=1,
+                         Dense(units=,
+                         
                                activation='softmax'
                                )
                         )

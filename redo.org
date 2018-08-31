@@ -1,0 +1,10 @@
+* Neural Net
+
+#+BEGIN_SRC ipython :session
+import tensorflow as tf
+import numpy as np
+#+END_SRC 
+
+#+BEGIN_SRC python
+    class RL(object):
+        def __init__(self, input_dim, layers
