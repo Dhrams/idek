@@ -28,7 +28,7 @@ for i in layers:
 
         Weights.append(tf.get_variable("W" + str(counter), [layers[i], 1], initializer = tf.contib.layers.xavier_initializer()))
         biases.append(tf.zeros(tf.float64, shape[layers[i], 1]))
-        prob = .5*(1 - tf.nn.tanh(np.matmul(some_layers[i-1],Weights[i]) + biases[i]))
+        prob = 500*(1 - tf.nn.tanh(np.matmul(some_layers[i-1],Weights[i]) + biases[i]))
         
     else:
 
@@ -45,14 +45,20 @@ loglik = tf.log(input_y*(input_y - prob) + (1 - input_y)*(input_y + prob))
 loss = -tf.reduce_mean(loglik * adv) 
 newGrads = tf.gradients(loss,tvars)
 
-nadam = tf.contrib.opt.NadamOptimizer(lr = 0.001, epsilon = 1e-8)
+nadam = tf.contrib.opt.NadamOptimizer(lr = 0.01, epsilon = 1e-8)
 
 WGrads = []
+BGrads = []
 
 for i in range(1, len(Weights) + 1):
     WGrads.append(tf.placeholder(tf.float64, name="batch_grad" + str(i)))
 
 updateGrads = nadam.apply_gradients(zip(WGrads, tvars))
+
+def get_observe(self):
+    '''
+    need to put csv parser here
+    '''
 
 def discounted_reward(r):
     discounted_r = np.zeros_like(r)
@@ -68,9 +74,12 @@ running_r = None
 reward_sum = 0
 episode_number = 1
 total_episodes = 10000
-init = tf.initialize_all_variables()
+init = tf.global_variables_initializer()
 
 with tf.Session() as sess:
+    sess.run(init)
+    observation = get_observe()
+    x = np.reshape(observation,[1,input_dim])
+    tfprob = sess.run(prob, feed_dict = {observations: x})
     
-
 
