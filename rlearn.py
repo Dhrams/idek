@@ -72,14 +72,64 @@ def discounted_reward(r):
 drs, xs, ys, hs = []
 running_r = None
 reward_sum = 0
+episode = True
 episode_number = 1
-total_episodes = 10000
 init = tf.global_variables_initializer()
 
 with tf.Session() as sess:
     sess.run(init)
     observation = get_observe()
-    x = np.reshape(observation,[1,input_dim])
-    tfprob = sess.run(prob, feed_dict = {observations: x})
-    
 
+    gradBuffer = sess.run(tvars)
+    for ix,grad in enumerate(gradBuffer):
+        gradBuffer[ix] = grad * 0
+    while episode:
+
+        x = np.reshape(observation,[1,input_dim])
+        tfprob = sess.run(prob, feed_dict = {observations: x})
+        action = 0 if tfprob < 200 else 1
+
+        xs.append(x)
+        y = 1 if action == 0 else 0 # need to find a way to get actual labels
+        ys.append(y)
+
+        observation, reward, done, info = step(action) # make class for this stuff
+
+        reward_sum += reward
+        drs.append(reward)
+
+        if done:
+            episode_number += 1
+            epx = np.vstack(xs)
+            epy = np.vstack(ys)
+            epr = np.vstack(drs)
+            xs,hs,drs,ys = [],[],[],[]
+
+             # compute the discounted reward backwards through time
+            discounted_epr = discount_rewards(epr)
+            # size the rewards to be unit normal (helps control the gradient estimator variance)
+            discounted_epr -= np.mean(discounted_epr)
+            discounted_epr /= np.std(discounted_epr)
+
+            tGrad = sess.run(newGrads,feed_dict={x_one: epx, input_y: epy, adv: discounted_epr})
+            for ix,grad in enumerate(tGrad):
+                gradBuffer[ix] += grad
+                
+            # If we have completed enough episodes, then update the policy network with our gradients.
+            if episode_number % batch_size == 0: 
+                sess.run(updateGrads,feed_dict={WGrad: gradBuffer})
+                for ix,grad in enumerate(gradBuffer):
+                    gradBuffer[ix] = grad * 0
+                
+                # Give a summary of how well our network is doing for each batch of episodes.
+                running_r = reward_sum if running_r is None else running_r * 0.99 + reward_sum * 0.01
+                print 'Average reward for episode %f.  Total average reward %f.' % (reward_sum/batch_size, running_r/batch_size)
+
+                if reward_sum/batch_size > 300:
+                    print "Model is now fully trained... would you like to input an angle?"
+                    
+                reward_sum = 0
+            
+            observation = get_observe()
+        
+print episode_number,'Episodes completed.'
