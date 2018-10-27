@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-
+import Arduino as Arduino
 
 
 
@@ -13,6 +13,10 @@ discount_fact = 0.99
 Weights = []
 some_layers = []
 biases = []
+
+drivepin = 10
+escpin = 6
+sensorpin = 0
 
 x_one = tf.placeholder(tf.float64, [None, input_dim], name = "x_one")
 W1 = tf.get_variable("W1", shape=[input_dim, layers[0]], initializer = tf.contib.layers.xavier_initializer())
@@ -50,6 +54,8 @@ nadam = tf.contrib.opt.NadamOptimizer(lr = 0.01, epsilon = 1e-8)
 WGrads = []
 BGrads = []
 
+board = Arduino('115200', port = "/dev/tty.wchusbserial1420")
+
 for i in range(1, len(Weights) + 1):
     WGrads.append(tf.placeholder(tf.float64, name="batch_grad" + str(i)))
 
@@ -59,7 +65,10 @@ def get_observe(self):
     '''
     need to put csv parser here
     '''
-
+    pitch = filter((-.3656* board.analogRead(sensorpin)) + 185.64)
+    input_ = request - pitch
+    return [pitch, input_]
+    
 def discounted_reward(r):
     discounted_r = np.zeros_like(r)
     running_add = 0
@@ -90,7 +99,7 @@ with tf.Session() as sess:
         action = 0 if tfprob < 200 else 1
 
         xs.append(x)
-        y = 1 if action == 0 else 0 # need to find a way to get actual labels
+        y = 1 if dataset[tfprob] else 0 # need to find a way to get actual labels
         ys.append(y)
 
         observation, reward, done, info = step(action) # make class for this stuff
