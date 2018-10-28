@@ -45,7 +45,7 @@ tvars = tf.trainable_variables()
 input_y = tf.placeholder(tf.float64, [None,1])
 adv = tf.placeholder(tf.float64, name="reward_sig")
 
-loglik = tf.log(input_y*(input_y - prob) + (1 - input_y)*(input_y + prob))
+loglik = tf.log(input_y*(input_y - prob) +http://forum.arduino.cc/index.php?topic=47726.0 (1 - input_y)*(input_y + prob))
 loss = -tf.reduce_mean(loglik * adv) 
 newGrads = tf.gradients(loss,tvars)
 
