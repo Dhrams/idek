@@ -74,7 +74,7 @@ class PID(object):
     returns:
     updatedPid - boolean for if the PID has been updated or not
     """
-    def updatePID(self, com):
+    def updatePID(slf, com):
     
         """
         maps the given float to an integer value between out_min and out_max

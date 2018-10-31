@@ -1,12 +1,20 @@
-from Arduino import Arduino
 import numpy as np
+import roslib
+import rospy
+import ros_arduino_msgs
 
-board = Arduino(port = "/dev/tty.wchusbserial...", 115200)
-board.Servos.attach(6)
 
+class test():
+    def __init__(self):
+        self.servo_writemicroseconds = rospy.ServiceProxy('ServoWritemicroseconds', ros_arduino_msgs.srv.ServoWritemicroseconds)
+        self.drive = 200
 
+    def trymap(x, in_min, in_max, out_min, out_max):
+        return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
 
-board.Servos.writeMicroseconds(trymap(drive))
+    def trymicro(self):
+        us = trymap(self.drive, 0, 1000, 1000, 2000)
+        self.servo_writemicroseconds(6, us)
 
-filter(-0.3656*board.read(6) + 185.64)
-
+if __name__ == "__main__":
+    trymicro()
