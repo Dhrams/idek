@@ -1,9 +1,12 @@
 import tensorflow as tf
 import numpy as np
+import Action
 import Arduino as Arduino
+import gym
 
+env.make('CartPole-v0')
 
-
+env.reset()
 
 
 tf.reset_default_graph()
@@ -17,6 +20,8 @@ biases = []
 drivepin = 10
 escpin = 6
 sensorpin = 0
+
+input_dim = 2
 
 x_one = tf.placeholder(tf.float64, [None, input_dim], name = "x_one")
 W1 = tf.get_variable("W1", shape=[input_dim, layers[0]], initializer = tf.contib.layers.xavier_initializer())
@@ -40,10 +45,10 @@ for i in layers:
         biases.append(tf.zeros(tf.float64, shape=[layers[i], layers[i+1]]))
         some_layers.append(tf.nn.relu(np.matmul(some_layers[i],Weights[i]) + biases[i]))
 
-    counter+=1
+counter+=1
 tvars = tf.trainable_variables()
 input_y = tf.placeholder(tf.float64, [None,1])
-adv = tf.placeholder(tf.float64, name="reward_sig")
+adv-v0 dqn git = tf.placeholder(tf.float64, name="reward_sig")
 
 loglik = tf.log(input_y*(input_y - prob) + (1 - input_y)*(input_y + prob))
 loss = -tf.reduce_mean(loglik * adv) 
@@ -65,8 +70,9 @@ def get_observe(self):
     '''
     need to put csv parser here
     '''
-    pitch = filter((-.3656* board.analogRead(sensorpin)) + 185.64)
-    input_ = request - pitch
+    analogRead = rospy.ServiceProxy('analog_read', AnalogRead)
+    pitch = math.floor((-.3656* analogRead(sensorpin)) + 185.64)
+    input_ = 0 - pitch
     return [pitch, input_]
     
 def discounted_reward(r):
